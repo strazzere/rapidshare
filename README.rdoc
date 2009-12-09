@@ -13,10 +13,6 @@ http://images.rapidshare.com/apidoc.txt
 
     require 'rapidshare'
 
-    Rapishare.account_details(rs_login, rs_password)
-
-	=> {"mirrors"=>"dt,dt,dt", "curfiles"=>"0", "ppointrate"=>"89", "fpoints"=>"5000", "jsconfig"=>"1", "username"=>"rs_login", "validuntil"=>"1267691783", "bodkb"=>"5000000", "addtime"=>"1254727976", "lots"=>"0", "plustrafficmode"=>"0", "rsantihack"=>"0", "type"=>"prem", "directstart"=>"1", "servertime"=>"1260183943", "premkbleft"=>"4838717", "ppoints"=>"0", "curspace"=>"0", "email"=>"yuo@example.com", "protectfiles"=>"0", "accountid"=>"10956494"}
-
 
 == License
 
