@@ -1,84 +1,102 @@
+require "cgi"
 require "httparty"
 
 class Rapidshare::API
-  
+
   include HTTParty
   base_uri 'api.rapidshare.com'
+  attr_reader :cookie
 
-  API_VERSION = 1 unless defined?(API_VERSION)
+  API_VERSION = "v1" unless defined?(API_VERSION)
+  ERROR_PREFIX = "ERROR: " unless defined?(ERROR_PREFIX)
+  UNIMPLEMENTED = %w(check_incomplete rename_file move_files_to_real_folder rename_real_folder delete_files add_real_folder del_real_folder move_real_folder list_files list_real_folders set_account_details enable_rs_antihack disable_rs_antihack send_rs_antihackmail file_migrator new_link_list edit_link_list get_link_list copy_files_to_link_list new_link_list_subfolder delete_link_list delete_link_list_entries edit_link_list_entry traffic_share_type mass_poll traffic_share_logs traffic_share_bandwidth buy_lots send_mail get_reward set_reward ppointst_of_points)
+  
+  def initialize(login, password, type)
+    params = { :login => login, :password => password, :type => type, :withcookie => 1 }    
+    response = request(:getaccountdetails, params)
+    data = to_hash(response)
+    @cookie = data[:cookie]
+  end
   
   def self.request(action, params = {})
-    path = self.build_path(action, params)
+    versioned_action = self.version_action(action)
+    path = self.build_path(versioned_action, params)
+    puts path
     response = self.get(path)
-    if response.start_with?("ERROR: ")
-      raise Rapidshare::API::Error.new(response)
+    if response.start_with?(ERROR_PREFIX)
+      case error = response.sub(ERROR_PREFIX, "")
+        when "Login failed."
+          raise Rapidshare::API::Error::LoginFailed
+        when "Type invalid."
+          raise Rapidshare::API::Error::TypeInvalid
+        when "Invalid routine called."
+          raise Rapidshare::API::Error::InvalidRoutineCalled.new(action)
+        else
+          raise Rapidshare::API::Error.new(error)
+        end
     end
     response
   end
-  
-  def self.get_api_cpu
-    action = "getapicpu"
-    response = self.request(action)
-    data = response.split(",")
-    {:current => data[0], :max => data[1]}
+
+  def request(action, params = {})
+    params.merge!(:cookie => cookie)
+    self.class.request(action, params)
+  end
+
+  def get_api_cpu
+    request(:getapicpu).split(",").each(&:to_i)
   end
   
-  def self.get_account_details_with_cookie(cookie)
-    action = "getaccountdetails"    
-    params = { :cookie => cookie, :withcookie => 1, :withrefstring => 1 }    
-    response = self.request(action, params)
-    self.parse_account_details(response)
+  def next_upload_server
+    request(:nextuploadserver).to_i
   end
   
-  def self.get_account_details(login, password, type)
-    action = "getaccountdetails"    
-    params = { :login => login, :password => password, :type => type, :withcookie => 1, :withrefstring => 1 }    
-    response = self.request(action, params)
-    self.parse_account_details(response)
+  def get_account_details
+    params = { :withcookie => 1, :withrefstring => 1 }    
+    response = request(:getaccountdetails, params)
+    to_hash(response)
   end
   
-  def self.get_referrer_logs(login, password, type)
-    action = "getreferrerlogs"
-    params = { :login => login, :password => password, :type => type }  
-    response = self.request(action, params)
-    response
-  end
-  
-  def self.get_point_logs(login, password, type)
-    action = "getpointlogs"
-    params = { :login => login, :password => password, :type => type }  
-    response = self.request(action, params)
-    response
+  def list_real_folders
+    request(:listrealfolders)
   end  
   
-  def self.list_real_folders(login, password, type)
-    action = "listrealfolders"
-    params = { :login => login, :password => password, :type => type }  
-    response = self.request(action, params)
-    response
+  def get_referrer_logs
+    request(:getreferrerlogs)
+  end
+  
+  def get_point_logs
+    request(:getpointlogs)
   end  
   
-  def self.premiumzone_logs(login, password)
-    action = "premiumzonelogs"
-    params = { :login => login, :password => password }  
-    response = self.request(action, params)
-    response
+  def premiumzone_logs
+    request(:premiumzonelogs)
   end
-    
-  def self.check_files(url)
-    action = "checkfiles"    
-    url, file_id, file_name = url.match(Rapidshare::FILE_REGEXP).to_a    
-    params = { :files => file_id, :filenames => file_name }
-    response = self.request(action, params)    
+  
+  def rename_file
+    raise
+  end
+  
+  def check_files(urls)
+    raise ArgumentError, "must be array of rapidshare links" unless urls.is_a?(Array)
+    files = []
+    filenames = []
+    urls.each do |u|
+      url, file, filename = u.match(Rapidshare::FILE_REGEXP).to_a
+      files << file
+      filenames << filename
+    end
+        
+    params = { :files => files.join(","), :filenames => filenames.join(",") }
+    response = request(:checkfiles, params)    
     response.split("\n").map do |r|
       data = r.split(",")
-      puts data.inspect
       {
         :file_id => data[0],
         :file_name => data[1],
         :file_size => data[2],
         :server_id => data[3],
-        :file_status => self.decode_file_status(data[4].to_i),
+        :file_status => self.class.decode_file_status(data[4].to_i),
         :short_host => data[5],
         :md5 => data[6]        
       }
@@ -89,13 +107,11 @@ class Rapidshare::API
   protected
   
   def self.build_path(action, params)
-    action =  "#{action}_v#{API_VERSION}"
     "/cgi-bin/rsapi.cgi?sub=#{action}&#{self.to_query(params)}"
   end
   
   def self.to_query(params)
-    require 'cgi' unless defined?(CGI) && defined?(CGI::escape)
-    params.map do |k,v|
+      params.map do |k,v|
       "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
     end.join("&")
   end
@@ -114,11 +130,15 @@ class Rapidshare::API
       end
   end
   
-  def self.parse_account_details(response)
+  def self.version_action(action)
+    "#{action}_#{API_VERSION}"
+  end
+  
+  def to_hash(response)
     data = {}
     response.split("\n").each do |item|
       k, v = item.split("=")
-      data[k] = v
+      data[k.to_sym] = v
     end
     data
   end

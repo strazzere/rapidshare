@@ -1,9 +1,10 @@
 class Rapidshare::Account
 
-  attr_reader :cookie, :data
+  attr_reader :api, :data
 
   def initialize(login, password, type)
-    @data = Rapidshare::API.get_account_details(login, password, type)
+    @api = Rapidshare::API.new(login, password, type)
+    @data = @api.get_account_details
   end
   
   def type
@@ -11,7 +12,7 @@ class Rapidshare::Account
   end
   
   def reload!
-    @data = Rapidshare::API.get_account_details_with_cookie(cookie)
+    @data = api.get_account_details
   end
   
   def account_id
