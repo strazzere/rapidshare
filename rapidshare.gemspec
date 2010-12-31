@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Tomasz Mazur"]
   s.email       = ["defkode@gmail.com"]
-  s.homepage    = "http://girhub.com/defkode/rapidshare"
+  s.homepage    = "http://github.com/defkode/rapidshare"
   s.summary     = %q{Rapidshare API}
   # s.description = %q{TODO: Write a gem description}
 
