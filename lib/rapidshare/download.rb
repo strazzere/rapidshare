@@ -2,10 +2,11 @@ require "progressbar"
 
 class Rapidshare::Download
 
-  attr_reader :cookie, :link, :remote_file, :status, :file_size, :save_as
+  attr_reader :api, :cookie, :link, :remote_file, :status, :file_size, :save_as
 
-  def initialize(link, cookie, save_as = nil)
-    @cookie = cookie
+  def initialize(link, api, save_as = nil)
+    @api    = api
+    @cookie = api.cookie
     @progress = 0    
     retrieve_data_and_prepare_download(link, save_as)
   end
@@ -41,7 +42,7 @@ class Rapidshare::Download
   end
   
   def retrieve_data_and_prepare_download(link, save_as)
-    d = Rapidshare::API.check_files(link).first  
+    d = api.check_files([link]).first  
     @status = d[:file_status]
     if status == :ok  
       @remote_file = Rapidshare.build_file_url(d[:server_id], d[:short_host], d[:file_id], d[:file_name])

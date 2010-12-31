@@ -9,10 +9,9 @@ class Rapidshare::API
 
   API_VERSION = "v1" unless defined?(API_VERSION)
   ERROR_PREFIX = "ERROR: " unless defined?(ERROR_PREFIX)
-  UNIMPLEMENTED = %w(check_incomplete rename_file move_files_to_real_folder rename_real_folder delete_files add_real_folder del_real_folder move_real_folder list_files list_real_folders set_account_details enable_rs_antihack disable_rs_antihack send_rs_antihackmail file_migrator new_link_list edit_link_list get_link_list copy_files_to_link_list new_link_list_subfolder delete_link_list delete_link_list_entries edit_link_list_entry traffic_share_type mass_poll traffic_share_logs traffic_share_bandwidth buy_lots send_mail get_reward set_reward ppointst_of_points)
   
-  def initialize(login, password, type)
-    params = { :login => login, :password => password, :type => type, :withcookie => 1 }    
+  def initialize(login, password)
+    params = { :login => login, :password => password, :withcookie => 1 }
     response = request(:getaccountdetails, params)
     data = to_hash(response)
     @cookie = data[:cookie]
@@ -27,8 +26,6 @@ class Rapidshare::API
       case error = response.sub(ERROR_PREFIX, "")
         when "Login failed."
           raise Rapidshare::API::Error::LoginFailed
-        when "Type invalid."
-          raise Rapidshare::API::Error::TypeInvalid
         when "Invalid routine called."
           raise Rapidshare::API::Error::InvalidRoutineCalled.new(action)
         else
@@ -43,38 +40,19 @@ class Rapidshare::API
     self.class.request(action, params)
   end
 
-  def get_api_cpu
-    request(:getapicpu).split(",").each(&:to_i)
-  end
-  
+  # sub=nextuploadserver
+  # Description:  Gives the next available upload server to use without fearing rejection.
+  # Parameters: None
+  # Reply fields: 1:The upload server. Complete it with rs$uploadserver.rapidshare.com
+  # Reply format: integer
   def next_upload_server
     request(:nextuploadserver).to_i
   end
   
   def get_account_details
-    params = { :withcookie => 1, :withrefstring => 1 }    
+    params = { :withcookie => 1 }
     response = request(:getaccountdetails, params)
     to_hash(response)
-  end
-  
-  def list_real_folders
-    request(:listrealfolders)
-  end  
-  
-  def get_referrer_logs
-    request(:getreferrerlogs)
-  end
-  
-  def get_point_logs
-    request(:getpointlogs)
-  end  
-  
-  def premiumzone_logs
-    request(:premiumzonelogs)
-  end
-  
-  def rename_file
-    raise
   end
   
   def check_files(urls)
