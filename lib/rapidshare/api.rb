@@ -7,7 +7,6 @@ class Rapidshare::API
   base_uri 'api.rapidshare.com'
   attr_reader :cookie
 
-  API_VERSION = "v1" unless defined?(API_VERSION)
   ERROR_PREFIX = "ERROR: " unless defined?(ERROR_PREFIX)
   
   def initialize(login, password)
@@ -18,8 +17,7 @@ class Rapidshare::API
   end
   
   def self.request(action, params = {})
-    versioned_action = self.version_action(action)
-    path = self.build_path(versioned_action, params)
+    path = self.build_path(action, params)
     puts path
     response = self.get(path)
     if response.start_with?(ERROR_PREFIX)
@@ -38,15 +36,6 @@ class Rapidshare::API
   def request(action, params = {})
     params.merge!(:cookie => cookie)
     self.class.request(action, params)
-  end
-
-  # sub=nextuploadserver
-  # Description:  Gives the next available upload server to use without fearing rejection.
-  # Parameters: None
-  # Reply fields: 1:The upload server. Complete it with rs$uploadserver.rapidshare.com
-  # Reply format: integer
-  def next_upload_server
-    request(:nextuploadserver).to_i
   end
   
   def get_account_details
@@ -106,10 +95,6 @@ class Rapidshare::API
       else
         :unknown # uknown status
       end
-  end
-  
-  def self.version_action(action)
-    "#{action}_#{API_VERSION}"
   end
   
   def to_hash(response)
