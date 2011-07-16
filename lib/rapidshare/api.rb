@@ -21,10 +21,10 @@ class Rapidshare::API
     puts path
     response = self.get(path)
     if response.start_with?(ERROR_PREFIX)
-      case error = response.sub(ERROR_PREFIX, "")
-        when "Login failed."
+      case error = response.sub(ERROR_PREFIX, "").split('.').first
+        when "Login failed"
           raise Rapidshare::API::Error::LoginFailed
-        when "Invalid routine called."
+        when "Invalid routine called"
           raise Rapidshare::API::Error::InvalidRoutineCalled.new(action)
         else
           raise Rapidshare::API::Error.new(error)
