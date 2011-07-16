@@ -85,16 +85,15 @@ class Rapidshare::API
   
   def self.decode_file_status(status_code)
     case status_code
-      when 0 : :error # File not found
-      when 1 : :ok # Anonymous downloading
-      when 2 : :ok # TrafficShare direct download without any logging
-      when 3 : :error # Server Down
-      when 4 : :error # File marked as illegal
-      when 5 : :error # Anonymous file locked, because it has more than 10 downloads already
-      when 6 : :ok # TrafficShare direct download with enabled logging. Read our privacy policy to see what is logged.
-      else
-        :unknown # uknown status
-      end
+      when 0 then :error # File not found
+      when 1 then :ok # Anonymous downloading
+      when 2 then :ok # TrafficShare direct download without any logging
+      when 3 then :error # Server Down
+      when 4 then :error # File marked as illegal
+      when 5 then :error # Anonymous file locked, because it has more than 10 downloads already
+      when 6 then :ok # TrafficShare direct download with enabled logging. Read our privacy policy to see what is logged.
+      else :unknown # uknown status
+    end
   end
   
   def to_hash(response)
