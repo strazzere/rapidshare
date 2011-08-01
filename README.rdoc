@@ -2,7 +2,9 @@
 
 == Description
 
-rapidshare.com API client
+This gem provides a wrapper for RapidShare API.
+
+Full documentation of RapidShare API is available at http://images.rapidshare.com/apidoc.txt
 
 == Installation
 
@@ -11,11 +13,23 @@ rapidshare.com API client
 == Usage
 
     require 'rapidshare'
+
+=== Login
+
+    my_account = Rapidshare::Account.new('my_login','my_password')
     
+View account details:
+
+    my_account.data
+
+Renew account details:
+
+    my_account.reload!
+
+=== Check Files
+    
+    my_account.api.check_files(['http://rapidshare.com/files/19232327/HornyRhinos.rar'])
+   
 == License
 
 Copyright (c) 2009-2010 Tomasz Mazur
-
-== API
-
-RapidShare API documentation is available at http://images.rapidshare.com/apidoc.txt
