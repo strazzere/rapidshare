@@ -4,7 +4,13 @@ require "httparty"
 class Rapidshare::API
 
   include HTTParty
-  base_uri 'api.rapidshare.com'
+  #
+  # According to RapidShare API docs it's recommended to use https
+  #
+  # PS: although this is easy to override, just write complete uri in request:
+  # Rapidshare::API.get('https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=...')
+  #
+  base_uri 'https://api.rapidshare.com'
   attr_reader :cookie
 
   ERROR_PREFIX = "ERROR: " unless defined?(ERROR_PREFIX)
