@@ -18,7 +18,7 @@ class Rapidshare::API
   
   def self.request(action, params = {})
     path = self.build_path(action, params)
-    puts path
+    puts path if Rapidshare.debug?
     response = self.get(path)
     if response.start_with?(ERROR_PREFIX)
       case error = response.sub(ERROR_PREFIX, "").split('.').first
