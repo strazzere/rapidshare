@@ -2,7 +2,6 @@ require "cgi"
 require "httparty"
 
 class Rapidshare::API
-
   include HTTParty
   #
   # According to RapidShare API docs it's recommended to use https
@@ -14,17 +13,20 @@ class Rapidshare::API
   attr_reader :cookie
 
   ERROR_PREFIX = "ERROR: " unless defined?(ERROR_PREFIX)
-  
+
   def initialize(login, password)
     params = { :login => login, :password => password, :withcookie => 1 }
     response = request(:getaccountdetails, params)
     data = to_hash(response)
     @cookie = data[:cookie]
   end
-  
+
+  def self.debug(debug)
+    debug_output debug ? $stderr : false
+  end
+
   def self.request(action, params = {})
     path = self.build_path(action, params)
-    puts path if Rapidshare.debug?
     response = self.get(path)
     if response.start_with?(ERROR_PREFIX)
       case error = response.sub(ERROR_PREFIX, "").split('.').first
@@ -43,13 +45,13 @@ class Rapidshare::API
     params.merge!(:cookie => cookie)
     self.class.request(action, params)
   end
-  
+
   def get_account_details
     params = { :withcookie => 1 }
     response = request(:getaccountdetails, params)
     to_hash(response)
   end
-  
+
   def check_files(urls)
     raise ArgumentError, "must be array of rapidshare links" unless urls.is_a?(Array)
     files = []
@@ -59,9 +61,9 @@ class Rapidshare::API
       files << file
       filenames << filename
     end
-        
+
     params = { :files => files.join(","), :filenames => filenames.join(",") }
-    response = request(:checkfiles, params)    
+    response = request(:checkfiles, params)
     response.split("\n").map do |r|
       data = r.split(",")
       {
@@ -71,24 +73,24 @@ class Rapidshare::API
         :server_id => data[3],
         :file_status => self.class.decode_file_status(data[4].to_i),
         :short_host => data[5],
-        :md5 => data[6]        
+        :md5 => data[6]
       }
     end
- 
+
   end
-  
+
   protected
-  
+
   def self.build_path(action, params)
     "/cgi-bin/rsapi.cgi?sub=#{action}&#{self.to_query(params)}"
   end
-  
+
   def self.to_query(params)
       params.map do |k,v|
       "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
     end.join("&")
   end
-  
+
   def self.decode_file_status(status_code)
     case status_code
       when 0 then :error # File not found
@@ -101,7 +103,7 @@ class Rapidshare::API
       else :unknown # uknown status
     end
   end
-  
+
   def to_hash(response)
     data = {}
     response.split("\n").each do |item|
