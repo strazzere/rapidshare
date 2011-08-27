@@ -12,9 +12,7 @@ class Rapidshare::Account
   end
   
   def download(file, save_as = nil)
-    # check few things
-    download = Rapidshare::Download.new(file, api, save_as)
-    download.start
+    Rapidshare::Download.perform(file, api, :save_as => save_as)
   end
 
 end
