@@ -14,14 +14,14 @@ Full documentation of RapidShare API is available at http://images.rapidshare.co
 
     require 'rapidshare'
 
+=== Turn Debug mode on/off
+
+    Rapidshare::API.debug(true)
+    Rapidshare::API.debug(false)
+
 === Login
 
     my_account = Rapidshare::Account.new('my_login','my_password')
-
-=== Turn Debug mode on/off
-
-   Rapidshare::API.debug(true)
-   Rapidshare::API.debug(false)
 
 View account details:
 
@@ -33,7 +33,11 @@ Renew account details:
 
 === Check Files
 
-    my_account.api.check_files(['http://rapidshare.com/files/19232327/HornyRhinos.rar'])
+    my_account.api.check_files(['https://rapidshare.com/files/829628035/HornyRhinos.jpg'])
+
+=== Download File
+
+    my_account.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
 
 == License
 
