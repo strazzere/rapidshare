@@ -33,6 +33,7 @@ class Rapidshare::Download
 
         if (dl_total > 0) and bar.nil?
           bar = ProgressBar.new(filename, dl_total)
+          bar.file_transfer_mode
         end
 
         bar.set(dl_now) if (dl_now > 0)
