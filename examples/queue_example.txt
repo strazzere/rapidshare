@@ -1,0 +1,7 @@
+
+# queue for rapidshare files
+# you can leave blank lines and add comments 
+
+https://rapidshare.com/files/829628035/HornyRhinos.jpg
+https://rapidshare.com/files/428232373/HappyHippos.jpg
+https://rapidshare.com/files/766059293/ElegantElephants.jpg
