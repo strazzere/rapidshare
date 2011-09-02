@@ -7,7 +7,9 @@ Bundler::GemHelper.install_tasks
 task :default => :test
 
 Rake::TestTask.new(:test) do |test|
-  test.test_files = FileList['test/unit/*_test.rb']
+  test.libs << %w{ lib test }
+  test.pattern = 'test/**/*_test.rb'
+  test.verbose = true
 end
 
 desc "Open an irb session preloaded with this library"

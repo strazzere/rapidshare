@@ -27,4 +27,5 @@ Gem::Specification.new do |s|
   # test dependencies 
   s.add_development_dependency('shoulda')
   s.add_development_dependency('turn')
+  s.add_development_dependency('fakeweb')
 end
