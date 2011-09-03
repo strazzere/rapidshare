@@ -1,80 +1,74 @@
 require 'curb'
 require 'progressbar'
 
-# Downloading by RapidShare API consists of two steps:
-# * "try download" - request file to download and get server address where to
-#   download it from
-# * actual download
+# PS: before downloading we have to check if file exists. Check_file methods
+# also gives us information for the download: hostname, filesize for progressbar
 #
 class Rapidshare::Download
-  DOWNLOAD_URL = 'https://%s/cgi-bin/rsapi.cgi?%s'
+  DOWNLOAD_URL = 'https://rs%s%s.rapidshare.com/cgi-bin/rsapi.cgi?%s'
 
-  attr_reader :url, :api, :fileid, :filename, :downloads_dir
+  attr_reader :url, :api, :fileid, :filename, :filesize, :server_id,
+    :short_host, :downloads_dir, :downloaded, :error
 
   def initialize(url, api, options = {})
     @url = url
     @api = api
-    @fileid, @filename = get_fileid_and_filename()
-    @filename = options[:save_as] if options[:save_as]
+    @filename = options[:save_as]
     @downloads_dir = options[:downloads_dir] || Dir.pwd
+ 
+    # OPTIMIZE replace these simple status variables with status codes
+    # and corresponding errors like "File not found"
+    # 
+    # set to true when file is successfully downloaded
+    @downloaded = false
+    # non-critical error is stored here, beside being displayed
+    @error = nil
   end
 
   def perform
-    download_params = { :sub => 'download', :fileid => @fileid, :filename => @filename, :cookie => @api.cookie }
-    # get hostname from try_download request (which returns file info including
-    # server on which is the file stored)
-    #
+    # step 1 - check file, checks if file exist and return its file size
+    # TODO move to separate method
+    response = @api.check_file(@url)
+    if (response[:file_status] == :ok)
+      @fileid = response[:file_id]
+      @filename ||= response[:file_name]
+      @filesize = response[:file_size].to_f
+      @server_id = response[:server_id] 
+      @short_host = response[:short_host] 
+    else
+      @error = "File not found"
+      return self
+    end
+      
+    # step 3 - actual download, downloads the file
     # TODO use ActiveSupport#to_query method for creating params string
-    request = DOWNLOAD_URL % [get_hostname(), download_params.map { |k,v| "#{k}=#{v}" }.join('&') ]
+    # TODO move download_url-generation to separate method
+    download_params = { :sub => 'download', :fileid => @fileid, :filename => @filename, :cookie => @api.cookie }
+    request = DOWNLOAD_URL % [ @server_id, @short_host, download_params.map { |k,v| "#{k}=#{v}" }.join('&') ]
     
     file = open(File.join(downloads_dir, filename), 'wb')
-    # TODO set dl_total and transfer_mode here, before loop
-    bar = nil
+
+    bar = ProgressBar.new(@filename, @filesize)
+    bar.file_transfer_mode
 
     Curl::Easy.perform(request) do |curl|
       curl.on_progress do |dl_total, dl_now|
-
-        if (dl_total > 0) and bar.nil?
-          bar = ProgressBar.new(@filename, dl_total)
-          bar.file_transfer_mode
-        end
-
-        bar.set(dl_now) if (dl_now > 0)
-
-        (dl_now <= dl_total)
+        bar.set(dl_now)
+        dl_now <= dl_total
       end 
 
-      curl.on_body { |data| file << data; data.length }
+      curl.on_body do |data|
+        file << data
+        data.length
+      end
       
       curl.on_complete { bar.finish }
-      
-      # TODO 
-      # curl.on_failure...
     end
 
     file.close
-
-    puts "" # new line after progressbar finishes
-  end
-
-  # parse fileid and filename from rapidshare url
-  # example: https://rapidshare.com/files/[fileid]/[filename]
-  #
-  def get_fileid_and_filename
-    @url.split('/').slice(-2,2)
-  end
-
-  # get name of the server which hosts the file for download
-  # this is done by "try download", downloading file with try=1 parameter
-  #
-  def get_hostname
-    response = @api.request('download', :fileid => @fileid, :filename => @filename, :try => 1).body
-  
-    # DL:$hostname,$dlauth,$countdown,$md5hex
-    # example: DL:rs370tl3.rapidshare.com,0,0,8700146036606454677EFAFB4A2AC52E
-    # dlauth and countdown are always 0 for premium accounts
-    response.slice!(0,3) # remove "DL:" 
-    response.split(',').first
+    
+    @downloaded = true
+    self
   end
 
 end

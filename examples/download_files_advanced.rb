@@ -29,12 +29,5 @@ end
 # FIXME downloads_dir doesn't work yet, everything is saved to current directory
 
 files_to_download.each do |file|
-  response = rs.api.check_files([file])
-  
-  unless (response.first[:file_status] == :ok)
-    p "File not found: [#{file}]"
-    next
-  end
-  
   rs.download(file)
 end

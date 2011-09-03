@@ -11,7 +11,7 @@ class RapidshareDownloadTest < Test::Unit::TestCase
 
   context "new download instance" do
 
-    should "extract fileid and filename from rapidshare link" do
+    should_eventually "extract fileid and filename from rapidshare link" do
       assert_equal '829628035', @download.fileid
       assert_equal 'HornyRhinos.jpg', @download.filename
     end
