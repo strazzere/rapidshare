@@ -24,27 +24,33 @@ class Rapidshare::Download
     @error = nil
   end
 
-  # downloads the file
-  #
-  # PS: before downloading we have to check if file exists. Check_file methods
-  # also gives us information for the download: hostname, filesize for progressbar
-  #
-  def perform
-    # step 1 - check file, checks if file exist and return its file size
-    # TODO move to separate method
+  # check if file exists and get data necessary for download
+  # return true or false, which determines whether the file can be downloaded
+  # 
+  def check
     response = @api.check_file(@url)
+
     if (response[:file_status] == :ok)
       @fileid = response[:file_id]
       @filename ||= response[:file_name]
       @filesize = response[:file_size].to_f
       @server_id = response[:server_id] 
-      @short_host = response[:short_host] 
+      @short_host = response[:short_host]
+      true
     else
       @error = "File not found"
-      return self
+      false
     end
-      
-    # step 3 - actual download, downloads the file    
+  end
+
+  # downloads the file
+  #
+  def perform
+    # before downloading we have to check if file exists. checkfiles service
+    # also gives us information for the download: hostname, file size for
+    # progressbar
+    return self unless self.check
+    
     file = open(File.join(@downloads_dir, @filename), 'wb')
 
     bar = ProgressBar.new(@filename, @filesize)
