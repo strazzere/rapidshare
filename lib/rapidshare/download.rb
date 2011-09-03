@@ -1,8 +1,7 @@
 require 'curb'
 require 'progressbar'
 
-# PS: before downloading we have to check if file exists. Check_file methods
-# also gives us information for the download: hostname, filesize for progressbar
+# this class downloads files from RapidShare
 #
 class Rapidshare::Download
   DOWNLOAD_URL = 'https://rs%s%s.rapidshare.com/cgi-bin/rsapi.cgi?%s'
@@ -25,6 +24,11 @@ class Rapidshare::Download
     @error = nil
   end
 
+  # downloads the file
+  #
+  # PS: before downloading we have to check if file exists. Check_file methods
+  # also gives us information for the download: hostname, filesize for progressbar
+  #
   def perform
     # step 1 - check file, checks if file exist and return its file size
     # TODO move to separate method
@@ -40,18 +44,13 @@ class Rapidshare::Download
       return self
     end
       
-    # step 3 - actual download, downloads the file
-    # TODO use ActiveSupport#to_query method for creating params string
-    # TODO move download_url-generation to separate method
-    download_params = { :sub => 'download', :fileid => @fileid, :filename => @filename, :cookie => @api.cookie }
-    request = DOWNLOAD_URL % [ @server_id, @short_host, download_params.map { |k,v| "#{k}=#{v}" }.join('&') ]
-    
-    file = open(File.join(downloads_dir, filename), 'wb')
+    # step 3 - actual download, downloads the file    
+    file = open(File.join(@downloads_dir, @filename), 'wb')
 
     bar = ProgressBar.new(@filename, @filesize)
     bar.file_transfer_mode
 
-    Curl::Easy.perform(request) do |curl|
+    Curl::Easy.perform(self.download_link) do |curl|
       curl.on_progress do |dl_total, dl_now|
         bar.set(dl_now)
         dl_now <= dl_total
@@ -69,6 +68,14 @@ class Rapidshare::Download
     
     @downloaded = true
     self
+  end
+
+  # return link which downloads the file
+  #
+  def download_link
+    # TODO use ActiveSupport#to_query method for creating params string
+    download_params = { :sub => 'download', :fileid => @fileid, :filename => @filename, :cookie => @api.cookie }
+    DOWNLOAD_URL % [ @server_id, @short_host, download_params.map { |k,v| "#{k}=#{v}" }.join('&') ]
   end
 
 end
