@@ -1,7 +1,6 @@
 require 'curb'
 require 'progressbar'
 
-#
 # Downloading by RapidShare API consists of two steps:
 # * "try download" - request file to download and get server address where to
 #   download it from
@@ -28,13 +27,12 @@ class Rapidshare::Download
     # TODO use ActiveSupport#to_query method for creating params string
     request = DOWNLOAD_URL % [get_hostname(), download_params.map { |k,v| "#{k}=#{v}" }.join('&') ]
     
-    f = open(File.join(downloads_dir, filename), 'wb')
-
+    file = open(File.join(downloads_dir, filename), 'wb')
+    # TODO set dl_total and transfer_mode here, before loop
     bar = nil
 
-    c = Curl::Easy.new(request) do |curl|
-      # TODO refactor on_progress code, I'm sure it can be done better
-      curl.on_progress do |dl_total, dl_now, ul_total, ul_now|
+    Curl::Easy.perform(request) do |curl|
+      curl.on_progress do |dl_total, dl_now|
 
         if (dl_total > 0) and bar.nil?
           bar = ProgressBar.new(@filename, dl_total)
@@ -46,12 +44,15 @@ class Rapidshare::Download
         (dl_now <= dl_total)
       end 
 
-      curl.on_body { |d| f << d; d.length }
+      curl.on_body { |data| file << data; data.length }
+      
+      curl.on_complete { bar.finish }
+      
+      # TODO 
+      # curl.on_failure...
     end
 
-    c.perform
-
-    f.close
+    file.close
 
     puts "" # new line after progressbar finishes
   end
