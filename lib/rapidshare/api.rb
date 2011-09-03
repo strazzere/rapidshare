@@ -64,6 +64,7 @@ class Rapidshare::API
 
     params = { :files => files.join(","), :filenames => filenames.join(",") }
     response = request(:checkfiles, params)
+    
     response.split("\n").map do |r|
       data = r.split(",")
       {
@@ -76,7 +77,10 @@ class Rapidshare::API
         :md5 => data[6]
       }
     end
+  end
 
+  def check_file(url)
+    check_files([url]).first
   end
 
   protected
