@@ -41,4 +41,4 @@ Renew account details:
 
 == License
 
-Copyright (c) 2009-2010 Tomasz Mazur
+Copyright (c) 2009-2011 Tomasz Mazur, Lukas Stejskal
