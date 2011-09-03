@@ -11,12 +11,6 @@ files_to_download = %w{
 rs = Rapidshare::Account.new('my_login','my_password')
 
 files_to_download.each do |file|
-  response = rs.api.check_files([file])
-  
-  unless (response.first[:file_status] == :ok)
-    p "File not found"
-    next
-  end
-  
-  rs.download(file)
+  result = rs.download(file)
+  puts "[#{file}] cannot be downloaded: #{result.error}" unless result.downloaded? 
 end

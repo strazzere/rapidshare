@@ -26,8 +26,10 @@ files_to_download = File.read(settings[:queue]).split(/\s*\n\s*/).select do |lin
   line =~ /^https?\:\/\/rapidshare\.com\/files\/\d+\//
 end
 
-# FIXME downloads_dir doesn't work yet, everything is saved to current directory
+# download files to current directory by default
+settings[:downloads_dir] ||= Dir.pwd
 
 files_to_download.each do |file|
-  rs.download(file)
+  result = rs.download(file, { :downloads_dir => settings[:downloads_dir] })
+  puts "[#{file}] cannot be downloaded: #{result.error}" unless result.downloaded? 
 end

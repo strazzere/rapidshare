@@ -28,7 +28,8 @@ class Rapidshare::Download
   # return true or false, which determines whether the file can be downloaded
   # 
   def check
-    response = @api.check_file(@url)
+    # PS: Api#check_file throws exception when file cannot be found
+    response = @api.check_file(@url) rescue {}
 
     if (response[:file_status] == :ok)
       @fileid = response[:file_id]
@@ -82,6 +83,10 @@ class Rapidshare::Download
     # TODO use ActiveSupport#to_query method for creating params string
     download_params = { :sub => 'download', :fileid => @fileid, :filename => @filename, :cookie => @api.cookie }
     DOWNLOAD_URL % [ @server_id, @short_host, download_params.map { |k,v| "#{k}=#{v}" }.join('&') ]
+  end
+
+  def downloaded?
+    @downloaded
   end
 
 end

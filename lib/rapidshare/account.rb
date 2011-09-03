@@ -11,8 +11,8 @@ class Rapidshare::Account
     @data = api.get_account_details
   end
   
-  def download(file, save_as = nil)
-    Rapidshare::Download.new(file, api, :save_as => save_as).perform
+  def download(file, options = {})
+    Rapidshare::Download.new(file, api, options).perform
   end
 
 end
