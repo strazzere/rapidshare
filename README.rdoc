@@ -4,7 +4,8 @@
 
 This gem provides a wrapper for RapidShare API.
 
-Full documentation of RapidShare API is available at http://images.rapidshare.com/apidoc.txt
+Full documentation of RapidShare API is available at
+http://images.rapidshare.com/apidoc.txt
 
 == Installation
 
@@ -27,17 +28,25 @@ View account details:
 
     my_account.data
 
-Renew account details:
-
-    my_account.reload!
-
 === Check Files
 
-    my_account.api.check_files(['https://rapidshare.com/files/829628035/HornyRhinos.jpg'])
+    my_account.api.check_files([
+        'https://rapidshare.com/files/829628035/HornyRhinos.jpg',
+        'https://rapidshare.com/files/428232373/HappyHippos.jpg'
+    ])
+    
+Check a single file:
+
+    my_account.api.check_file('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
 
 === Download File
 
     my_account.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
+
+== Examples
+
+In /examples directory you will find scripts running on Rapidshare gem which can
+be used as simple download clients.
 
 == License
 
