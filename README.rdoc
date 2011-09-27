@@ -30,14 +30,10 @@ View account details:
 
 === Check Files
 
-    my_account.api.check_files([
-        'https://rapidshare.com/files/829628035/HornyRhinos.jpg',
-        'https://rapidshare.com/files/428232373/HappyHippos.jpg'
-    ])
-    
-Check a single file:
-
-    my_account.api.check_file('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
+    my_account.api.checkfiles(
+      'https://rapidshare.com/files/829628035/HornyRhinos.jpg',
+      'https://rapidshare.com/files/428232373/HappyHippos.jpg'
+    )
 
 === Download File
 

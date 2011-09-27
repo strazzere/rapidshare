@@ -52,8 +52,8 @@ class Rapidshare::API
     to_hash(response)
   end
 
-  def check_files(urls)
-    raise ArgumentError, "must be array of rapidshare links" unless urls.is_a?(Array)
+  def checkfiles(*urls)
+    urls.flatten!
     files = []
     filenames = []
     urls.each do |u|
@@ -79,9 +79,7 @@ class Rapidshare::API
     end
   end
 
-  def check_file(url)
-    check_files([url]).first
-  end
+  alias check_files checkfiles
 
   protected
 
