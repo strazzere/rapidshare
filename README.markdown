@@ -9,40 +9,56 @@ Full documentation of RapidShare API is available at
 
 ## Installation ##
 
-    gem install rapidshare
+```ruby
+gem install rapidshare
+```
 
 ## Usage ##
 
-    require 'rapidshare'
+```ruby
+require 'rapidshare'
+```
 
 ### Turn Debug mode on/off ###
 
-    Rapidshare::API.debug(true)
-    Rapidshare::API.debug(false)
+```ruby
+Rapidshare::API.debug(true)
+Rapidshare::API.debug(false)
+```
 
 ### Login ###
 
-    my_account = Rapidshare::Account.new('my_login','my_password')
+```ruby
+my_account = Rapidshare::Account.new('my_login','my_password')
+```
 
 View account details:
 
-    my_account.data
+```ruby
+my_account.data
+```
 
 ### Check Files ###
 
-    my_account.api.checkfiles(
-      'https://rapidshare.com/files/829628035/HornyRhinos.jpg',
-      'https://rapidshare.com/files/428232373/HappyHippos.jpg'
-    )
+```ruby
+my_account.api.checkfiles(
+  'https://rapidshare.com/files/829628035/HornyRhinos.jpg',
+  'https://rapidshare.com/files/428232373/HappyHippos.jpg'
+)
+```
 
 ### Download File ###
 
-    my_account.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
+```ruby
+my_account.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
+```
 
 ## Examples ##
 
-In [examples directory](./examples/) you will find scripts running on Rapidshare gem which can
+In [examples directory](./master/examples/) you will find scripts running on Rapidshare gem which can
 be used as simple download clients.
+
+## [TODO](./master/TODO.rdoc) ##
 
 ## License ##
 
