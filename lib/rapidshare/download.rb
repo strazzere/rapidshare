@@ -39,6 +39,7 @@ class Rapidshare::Download
       @short_host = response[:short_host]
       true
     else
+      # TODO report errors according to actual file status
       @error = "File not found"
       false
     end
