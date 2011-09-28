@@ -14,4 +14,11 @@ class Test::Unit::TestCase
   # integration testing)
   FakeWeb.allow_net_connect = false
 
+  def read_fixture(filename, extension = 'txt')
+    # add extension to file unless it already has it
+    filename += ".#{extension}" unless (filename =~ /\.\w+$/)
+    
+    File.read File.expand_path(File.dirname(__FILE__) + "/fixtures/#{filename}")
+  end
+
 end

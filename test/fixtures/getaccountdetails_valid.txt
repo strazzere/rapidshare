@@ -1,0 +1,16 @@
+accountid=12345
+servertime=1217244932
+addtime=127273393
+username=valid_account
+directstart=1
+country=CZ
+mailflags=
+language=
+jsconfig=1000
+email=valid_account@email.com
+curfiles=100
+curspace=103994340
+rapids=100
+billeduntil=1320093121
+nortuntil=1307123910
+cookie=F0EEB41B38363A41F0D125102637DB7236468731F8DB760DC57934B4714C8D13

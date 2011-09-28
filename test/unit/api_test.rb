@@ -2,8 +2,9 @@ require 'test_helper'
 
 class ApiTest < Test::Unit::TestCase
 
+  # TODO move to checkfiles test
+  # 
   context "Valid API request" do
-
     setup do
       FakeWeb.register_uri(:get,
         'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=checkfiles&files=439727873&filenames=DT-02-DT.rar',
@@ -20,11 +21,9 @@ class ApiTest < Test::Unit::TestCase
       assert response.length > 0
       assert !response.include?("ERROR: ")      
     end
-
   end
 
-  context "API request calling invalid routine" do
-
+  context "Invalid routine call" do
     setup do
       FakeWeb.register_uri(:get,
         'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=invalid_routine&param_1=value_1',
@@ -37,7 +36,6 @@ class ApiTest < Test::Unit::TestCase
         Rapidshare::API.request(:invalid_routine, {:param_1 => "value_1"})
       end
     end
-
   end
 
 end
