@@ -1,5 +1,0 @@
-
-=== 0.4.1
-
-* rewrote download method from Net:HTTP to Curb gem
-* added download scripts as examples of use of rapidshare gem
