@@ -12,6 +12,6 @@ class Test::Unit::TestCase
 
   # don't allow internet connections for testing (we should use fixtures, except
   # integration testing)
-  # FakeWeb.allow_net_connect = false
+  FakeWeb.allow_net_connect = false
 
 end
