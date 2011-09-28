@@ -52,6 +52,20 @@ class Rapidshare::API
     to_hash(response)
   end
 
+  # get status details about files
+  # input - array of files: checkfiles(file1), checkfiles(file1, file2),
+  #   checkfiles([file1,file2])
+  # output params (hash returned for each file):
+  # :file_id (string) - part of url
+  #   https://rapidshare.com/files/829628035/HornyRhinos.jpg -> '829628035'
+  # :file_name (string) - part of url
+  #   https://rapidshare.com/files/829628035/HornyRhinos.jpg -> 'HornyRhinos.jpg'
+  # :file_size (integer) - in bytes. returns 0 if files does not exists
+  # :file_status - decoded file status: :ok or :error,
+  # :short_host - used to construct download url
+  # :server_id - used to construct download url
+  # :md5 
+  #
   def checkfiles(*urls)
     urls.flatten!
     files = []
@@ -93,16 +107,16 @@ class Rapidshare::API
     end.join("&")
   end
 
+  # TODO in checkfiles, return both file_status as is and decoded file status
+  # or just boolean value if file is OK and can be downloaded
+  #
   def self.decode_file_status(status_code)
     case status_code
       when 0 then :error # File not found
-      when 1 then :ok # Anonymous downloading
-      when 2 then :ok # TrafficShare direct download without any logging
-      when 3 then :error # Server Down
+      when 1 then :ok # File OK
+      when 3 then :error # Server down
       when 4 then :error # File marked as illegal
-      when 5 then :error # Anonymous file locked, because it has more than 10 downloads already
-      when 6 then :ok # TrafficShare direct download with enabled logging. Read our privacy policy to see what is logged.
-      else :unknown # uknown status
+      else :error # uknown status, this shouldn't happen
     end
   end
 
