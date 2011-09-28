@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require 'test_helper'
 
-class RapidshareApiTest < Test::Unit::TestCase
+class ApiTest < Test::Unit::TestCase
 
   context "Valid API request" do
 

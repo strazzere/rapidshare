@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RapidshareDownloadTest < Test::Unit::TestCase
+class DownloadTest < Test::Unit::TestCase
 
   def setup
     url = 'https://rapidshare.com/files/829628035/HornyRhinos.jpg'
