@@ -84,4 +84,22 @@ class ApiTest < Test::Unit::TestCase
     end
   end
 
+  context "text_to_hash method" do
+    should "convert text in specific format to hash" do
+      assert_equal @rs.api.text_to_hash(" key1=value1 \n\tkey2=value2"),
+        { :key1 => 'value1', :key2 => 'value2' }
+    end
+
+    should "convert rapidshare text response to hash" do
+      assert_equal @rs.api.text_to_hash(read_fixture('getaccountdetails_valid.txt')),
+        {:accountid=>"12345", :servertime=>"1217244932", :addtime=>"127273393",
+        :username=>"valid_account", :directstart=>"1", :country=>"CZ",
+        :mailflags=>nil, :language=>nil, :jsconfig=>"1000",
+        :email=>"valid_account@email.com", :curfiles=>"100",
+        :curspace=>"103994340", :rapids=>"100", :billeduntil=>"1320093121",
+        :nortuntil=>"1307123910",
+        :cookie=>"F0EEB41B38363A41F0D125102637DB7236468731F8DB760DC57934B4714C8D13"}
+    end
+  end
+
 end

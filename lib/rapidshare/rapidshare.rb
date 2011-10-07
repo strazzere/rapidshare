@@ -1,3 +1,7 @@
+
+# active_support cherry-picks
+require 'active_support/core_ext/hash/keys'
+
 class Rapidshare
 
   FILE_REGEXP = /\Ahttps?:\/\/rapidshare.com\/files\/([0-9]+)\/(.+)\z/ix unless defined?(FILE_REGEXP)

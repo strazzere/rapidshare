@@ -17,7 +17,7 @@ class Rapidshare::API
   def initialize(login, password)
     params = { :login => login, :password => password, :withcookie => 1 }
     response = request(:getaccountdetails, params)
-    data = to_hash(response)
+    data = text_to_hash(response)
     @cookie = data[:cookie]
   end
 
@@ -27,6 +27,7 @@ class Rapidshare::API
 
   def self.request(action, params = {})
     path = self.build_path(action, params)
+    
     response = self.get(path)
     if response.start_with?(ERROR_PREFIX)
       case error = response.sub(ERROR_PREFIX, "").split('.').first
@@ -49,7 +50,7 @@ class Rapidshare::API
   def get_account_details
     params = { :withcookie => 1 }
     response = request(:getaccountdetails, params)
-    to_hash(response)
+    text_to_hash(response)
   end
 
   # get status details about files
@@ -95,8 +96,6 @@ class Rapidshare::API
 
   alias check_files checkfiles
 
-  protected
-
   def self.build_path(action, params)
     "/cgi-bin/rsapi.cgi?sub=#{action}&#{self.to_query(params)}"
   end
@@ -120,13 +119,11 @@ class Rapidshare::API
     end
   end
 
-  def to_hash(response)
-    data = {}
-    response.split("\n").each do |item|
-      k, v = item.split("=")
-      data[k.to_sym] = v
-    end
-    data
+  # convert rapidshare response (just a text in specific format, see example) to hash
+  # example: key1=value1\nkey1=value2 => { :key1 => 'value1', :key2 => 'value2' }
+  #
+  def text_to_hash(response)
+    Hash[ response.strip.split(/\s*\n\s*/).map { |param| param.split('=') } ].symbolize_keys
   end
 
 end
