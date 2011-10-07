@@ -97,13 +97,7 @@ class Rapidshare::API
   alias check_files checkfiles
 
   def self.build_path(action, params)
-    "/cgi-bin/rsapi.cgi?sub=#{action}&#{self.to_query(params)}"
-  end
-
-  def self.to_query(params)
-      params.map do |k,v|
-      "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
-    end.join("&")
+    "/cgi-bin/rsapi.cgi?sub=#{action}&#{params.to_query}"
   end
 
   # TODO in checkfiles, return both file_status as is and decoded file status

@@ -81,9 +81,8 @@ class Rapidshare::Download
   # return link which downloads the file
   #
   def download_link
-    # TODO use ActiveSupport#to_query method for creating params string
     download_params = { :sub => 'download', :fileid => @fileid, :filename => @filename, :cookie => @api.cookie }
-    DOWNLOAD_URL % [ @server_id, @short_host, download_params.map { |k,v| "#{k}=#{v}" }.join('&') ]
+    DOWNLOAD_URL % [ @server_id, @short_host, download_params.to_query ]
   end
 
   def downloaded?
