@@ -58,7 +58,7 @@ my_account.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
 In [examples directory](./master/examples/) you will find scripts running on Rapidshare gem which can
 be used as simple download clients.
 
-## [TODO](./master/TODO.rdoc) ##
+## [TODO](./master/TODO.markdown) ##
 
 ## License ##
 
