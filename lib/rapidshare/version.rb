@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Rapidshare
   VERSION = "0.4.5"
 
