@@ -90,7 +90,7 @@ class Rapidshare::Download
     self
   end
 
-  # Generates download link - a request to Rapidshare API.
+  # Generates link which downloads file by Rapidshare API
   #
   def download_link
     download_params = { :sub => 'download', :fileid => @fileid, :filename => @filename, :cookie => @api.cookie }
