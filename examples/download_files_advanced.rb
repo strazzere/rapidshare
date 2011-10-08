@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 
 # this is slightly more advanced example of rapidshare download script
 
