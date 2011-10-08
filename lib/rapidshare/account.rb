@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-# Provides user-friendly interface to +RapidShare::API+ class.
+# Provides user-friendly interface to +Rapidshare::API+ class.
 #
 # This is still work in progress.
 #
