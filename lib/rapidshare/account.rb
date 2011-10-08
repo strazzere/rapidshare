@@ -1,28 +1,33 @@
+# encoding: utf-8
 
-# This class provides (or should) user-friendly interface to RapidShare::API class.
+# Provides user-friendly interface to +RapidShare::API+ class.
+#
+# This is still work in progress.
 #
 class Rapidshare::Account
 
   attr_reader :api, :data
   
-  # log into Rapidshare account as premium user
+  # Logs into Rapidshare account as a premium user.
   # 
   def initialize(login, password)
     @api = Rapidshare::API.new(login, password)
     @data = @api.get_account_details
   end
   
-  # reload account data
+  # Reloads account data.
   #
   def reload!
     @data = api.get_account_details
   end
   
-  # download file
+  # Downloads file.
   #
-  # options:
-  # * save_as - save file under different filename
-  # * downloads_dir - save file into specific directory (default: current directory)
+  # Options:
+  # * *filename* (optional) - specifies filename under which the file will be
+  #   saved. Default: filename parsed from Rapidshare link.
+  # * *downloads_dir* (optional) - specifies directory into which downloaded files
+  #   will be saved. Default: current directory.
   #
   def download(file, options = {})
     Rapidshare::Download.new(file, api, options).perform
