@@ -35,6 +35,11 @@ class ApiTest < Test::Unit::TestCase
         :body => 'ERROR: Files invalid. (1dd3841d)'
       )
 
+      FakeWeb.register_uri(:get,
+        "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=checkfiles&filenames=file&files=server&cookie=#{@cookie}",
+        :body => 'ERROR: Files invalid. (1dd3841d)'
+      )
+
       @files = %w{
         https://rapidshare.com/files/829628035/HornyRhinos.jpg
         https://rapidshare.com/files/428232373/HappyHippos.jpg

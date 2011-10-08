@@ -98,19 +98,13 @@ class Rapidshare::API
   # * *:md5* 
   #
   def checkfiles(*urls)
-    urls.flatten!
-    files = []
-    filenames = []
-    urls.each do |u|
-      url, file, filename = u.match(Rapidshare::FILE_REGEXP).to_a
-      files << file
-      filenames << filename
-    end
-
-    params = { :files => files.join(","), :filenames => filenames.join(",") }
-    response = request(:checkfiles, params)
+    raise Rapidshare::API::Error if urls.empty?
     
-    response.split("\n").map do |r|
+    files, filenames = urls.flatten.map { |url| fileid_and_filename(url) }.transpose
+
+    response = request(:checkfiles, :files => files.join(","), :filenames => filenames.join(","))
+    
+    response.strip.split(/\s*\n\s*/).map do |r|
       data = r.split(",")
       {
         :file_id => data[0],
@@ -145,6 +139,15 @@ class Rapidshare::API
       when 4 then :error # File marked as illegal
       else :error # uknown status, this shouldn't happen
     end
+  end
+
+  # Extracts file id and file name from Rapidshare url. Returns both in array.
+  #
+  # Example:
+  #   https://rapidshare.com/files/829628035/HornyRhinos.jpg -> [ '829628035', 'HornyRhinos.jpg' ] 
+  #
+  def fileid_and_filename(url)
+    url.split('/').slice(-2,2) || ['', '']
   end
 
   # Converts rapidshare response (which is just a text in specific format) to hash.
