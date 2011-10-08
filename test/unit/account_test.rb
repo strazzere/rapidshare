@@ -2,6 +2,9 @@ require 'test_helper'
 
 class AccountTest < Test::Unit::TestCase
 
+  # override default setup method with account login, it's tested it separately in this class
+  def setup; end
+
   context "Invalid account login" do
     setup do
       FakeWeb.register_uri(:get,

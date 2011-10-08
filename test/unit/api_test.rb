@@ -2,22 +2,6 @@ require 'test_helper'
 
 class ApiTest < Test::Unit::TestCase
 
-  def setup
-    @cookie = 'F0EEB41B38363A41F0D125102637DB7236468731F8DB760DC57934B4714C8D13'
-
-    FakeWeb.register_uri(:get,
-      'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getaccountdetails&login=valid_login&password=valid_password&withcookie=1&cookie=',
-      :body => read_fixture('getaccountdetails_valid.txt')
-    )
-
-    FakeWeb.register_uri(:get,
-      "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getaccountdetails&withcookie=1&cookie=#{@cookie}",
-      :body => read_fixture('getaccountdetails_valid.txt')
-    )
-    
-    @rs = Rapidshare::Account.new('valid_login','valid_password')
-  end
-
   context "Checkfiles method" do
     setup do
       FakeWeb.register_uri(:get,
