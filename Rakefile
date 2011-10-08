@@ -33,3 +33,11 @@ namespace :doc do
     FileUtils.rm_rf(RDOC_ROOT) if File.exists?(RDOC_ROOT)
   end
 end
+
+require 'rcov/rcovtask'
+Rcov::RcovTask.new do |t|
+  t.libs << "test"
+  t.pattern = 'test/unit/*_test.rb'
+  # exclude loaded libraries from code analysis
+  t.rcov_opts << '--exclude /gems/'
+end

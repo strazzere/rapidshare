@@ -1,6 +1,7 @@
 pkg/*
 doc/*
 .yardoc/*
+coverage/*
 examples/*.jpg
 examples/*.avi
 examples/*.rar

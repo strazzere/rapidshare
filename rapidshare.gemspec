@@ -20,10 +20,13 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('rake', '~> 0.9.2')
-  s.add_dependency('yard', '~> 0.7')
   s.add_dependency('httparty', '~> 0.6')
   s.add_dependency('curb', '~> 0.7')
   s.add_dependency('progressbar', '~> 0.9')
+
+  # development dependencies 
+  s.add_development_dependency('yard', '~> 0.7')
+  s.add_development_dependency('rcov', '~> 0.9')
 
   # test dependencies 
   s.add_development_dependency('shoulda')
