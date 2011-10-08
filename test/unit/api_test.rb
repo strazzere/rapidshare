@@ -107,4 +107,16 @@ class ApiTest < Test::Unit::TestCase
     end
   end
 
+  context "fileid_and_filename method" do
+    should "return file_id and file_name in array from valid rapidshare link" do
+      assert_equal ['', ''], @rs.api.fileid_and_filename('')
+    end
+
+    should "return array of empty strings for invalid rapidshare link" do
+      url = 'https://rapidshare.com/files/829628035/HornyRhinos.jpg'
+      assert_instance_of Array, @rs.api.fileid_and_filename(url)
+      assert_equal ['829628035', 'HornyRhinos.jpg'], @rs.api.fileid_and_filename(url)
+    end
+  end
+
 end
