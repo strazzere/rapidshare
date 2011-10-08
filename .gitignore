@@ -1,4 +1,6 @@
 pkg/*
+doc/*
+.yardoc/*
 examples/*.jpg
 examples/*.avi
 examples/*.rar
