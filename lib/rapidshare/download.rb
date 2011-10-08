@@ -1,7 +1,12 @@
+# encoding: utf-8
+
 require 'curb'
 require 'progressbar'
 
-# this class downloads files from RapidShare
+# Downloads files from Rapidshare. Separate from +Rapidshare::API+ class because
+# downloading is much more complex than other service calls.
+#
+# Displays text progress bar during download.
 #
 class Rapidshare::Download
   DOWNLOAD_URL = 'https://rs%s%s.rapidshare.com/cgi-bin/rsapi.cgi?%s'
@@ -9,6 +14,12 @@ class Rapidshare::Download
   attr_reader :url, :api, :fileid, :filename, :filesize, :server_id,
     :short_host, :downloads_dir, :downloaded, :error
 
+  # Options:
+  # * *filename* (optional) - specifies filename under which the file will be
+  #   saved. Default: filename parsed from Rapidshare link.
+  # * *downloads_dir* (optional) - specifies directory into which downloaded files
+  #   will be saved. Default: current directory.
+  #
   def initialize(url, api, options = {})
     @url = url
     @api = api
@@ -24,9 +35,10 @@ class Rapidshare::Download
     @error = nil
   end
 
-  # check if file exists and get data necessary for download
-  # return true or false, which determines whether the file can be downloaded
-  # 
+  # Checks if file exists (using checkfiles service) and gets data necessary for download.
+  #
+  # Returns true or false, which determines whether the file can be downloaded.
+  #
   def check
     # PS: Api#checkfiles throws exception when file cannot be found
     response = @api.checkfiles(@url) rescue {}
@@ -45,7 +57,7 @@ class Rapidshare::Download
     end
   end
 
-  # downloads the file
+  # Downloads file. Calls +check+ method first.
   #
   def perform
     # before downloading we have to check if file exists. checkfiles service
@@ -78,13 +90,15 @@ class Rapidshare::Download
     self
   end
 
-  # return link which downloads the file
+  # Generates download link - a request to Rapidshare API.
   #
   def download_link
     download_params = { :sub => 'download', :fileid => @fileid, :filename => @filename, :cookie => @api.cookie }
     DOWNLOAD_URL % [ @server_id, @short_host, download_params.to_query ]
   end
 
+  # Says whether file has been successfully downloaded.
+  #
   def downloaded?
     @downloaded
   end
