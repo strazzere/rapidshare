@@ -41,8 +41,8 @@ class Rapidshare::Download
   #
   def check
     # PS: Api#checkfiles throws exception when file cannot be found
-    response = @api.checkfiles(@url) rescue {}
-
+    response = @api.checkfiles(@url).first rescue {}
+    
     if (response[:file_status] == :ok)
       @fileid = response[:file_id]
       @filename ||= response[:file_name]
