@@ -69,9 +69,24 @@ class DownloadTest < Test::Unit::TestCase
       assert ! @downloader.error.to_s.empty?
     end
   end
-    
-  # TODO how to test "perform" method? probably by integration testing
-  # or should we mock the download as well? or both? (yeah, probably that)
+
+  # perform method for valid files, which actually downloads file from
+  # Rapidshare, has been moved to integration tests
+  
+  context "perfom method for invalid file" do
+    setup do
+      @downloader = Rapidshare::Download.new('', @rs.api)
+      @downloader.perform
+    end
+
+    should "not download anything" do
+      assert ! @downloader.downloaded
+    end
+
+    should "return error" do
+      assert ! @downloader.error.to_s.empty?
+    end
+  end
 
   context "download_link method" do
     should "return link which downloads file by Rapidshare API" do
@@ -89,7 +104,7 @@ class DownloadTest < Test::Unit::TestCase
       assert ! @downloader.downloaded?
     end
 
-    should_eventually  "return \"true\" after file was successfully downloaded" do
+    should_eventually "return \"true\" after file was successfully downloaded" do
       assert true
     end
   end
