@@ -103,10 +103,6 @@ class DownloadTest < Test::Unit::TestCase
     should "return \"false\" by default " do
       assert ! @downloader.downloaded?
     end
-
-    should_eventually "return \"true\" after file was successfully downloaded" do
-      assert true
-    end
   end
 
 end
