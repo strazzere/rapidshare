@@ -11,31 +11,43 @@ require 'test_helper'
 
 class DownloadTest < Test::Unit::TestCase
 
+  @@downloads_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'tmp'))
+  @@filename = 'horny_rhinos.jpg'
+  @@file_path = File.join(@@downloads_dir, @@filename)
+
   def setup
     FakeWeb.allow_net_connect = true
 
+    Dir.mkdir(@@downloads_dir) unless File.exists?(@@downloads_dir)
+    File.delete(@@file_path) if File.exists?(@@file_path)
+
     settings = YAML::load(File.read(File.join(ENV['HOME'],'.rapidshare'))) rescue nil
-    
+  
     @rs = Rapidshare::Account.new(settings[:login], settings[:password])
 
     @file = 'https://rapidshare.com/files/829628035/HornyRhinos.jpg'
+      
+    @downloader = Rapidshare::Download.new(@file, @rs.api,
+      :downloads_dir => @@downloads_dir, :save_as => @@filename
+    )
 
-    @downloader = Rapidshare::Download.new(@file, @rs.api)
+    # PS: FakeWeb ignores Curb requests
+    @downloader.perform
   end
   
-  def teardown    
-    FakeWeb.allow_net_connect = false
-  end
-  
+  def teardown
+    File.delete(@@file_path) if File.exists?(@@file_path)
+    if File.exists?(@@downloads_dir)
+      Dir.rmdir(@@downloads_dir) rescue ''
+    end
+  end  
+
   context "perform method" do
-    should "download the file from Rapidshare" do
-      @downloader.perform
+    should "download file from Rapidshare" do
       assert @downloader.downloaded?
-    end    
+    # should "should save downloaded file to specific directory and path if set" do
+      assert File.exists?(@@file_path)
+    end
   end
-  
-  # TODO write more tests regarding downloaded file,
-  # saving into specific dir under specific filename
-  # and remove the file in teardown method
 
 end

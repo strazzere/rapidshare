@@ -1,5 +1,6 @@
 pkg/*
 doc/*
+tmp/*
 .yardoc/*
 coverage/*
 examples/*.jpg

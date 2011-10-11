@@ -66,7 +66,7 @@ class Rapidshare::Download
     return self unless self.check
     
     file = open(File.join(@downloads_dir, @filename), 'wb')
-
+    
     bar = ProgressBar.new(@filename, @filesize)
     bar.file_transfer_mode
 
