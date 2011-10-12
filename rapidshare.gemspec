@@ -23,13 +23,14 @@ Gem::Specification.new do |s|
   s.add_dependency('httparty', '~> 0.6')
   s.add_dependency('curb', '~> 0.7')
   s.add_dependency('progressbar', '~> 0.9')
-
+  
   # development dependencies 
   s.add_development_dependency('yard', '~> 0.7')
   s.add_development_dependency('rcov', '~> 0.9')
 
   # test dependencies 
-  s.add_development_dependency('shoulda')
-  s.add_development_dependency('turn')
-  s.add_development_dependency('fakeweb')
+  s.add_development_dependency('shoulda', '~> 2.11')
+  # PS: turn 0.8.3 breaks tests with minitest bug
+  s.add_development_dependency('turn', '0.8.2')
+  s.add_development_dependency('fakeweb', '~> 1.3')
 end
