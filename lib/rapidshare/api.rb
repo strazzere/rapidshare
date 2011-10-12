@@ -72,11 +72,12 @@ class Rapidshare::API
 
   # Returns account details in hash.
   #
-  def get_account_details
-    params = { :withcookie => 1 }
-    response = request(:getaccountdetails, params)
+  def getaccountdetails
+    response = request(:getaccountdetails, :withcookie => 1)
     text_to_hash(response)
   end
+
+  alias get_account_details getaccountdetails
 
   # Retrieves information about RapidShare files.
   #

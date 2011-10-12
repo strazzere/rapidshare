@@ -2,7 +2,53 @@ require 'test_helper'
 
 class ApiTest < Test::Unit::TestCase
 
-  context "Checkfiles method" do
+  context "Invalid method call" do
+    setup do
+      FakeWeb.register_uri(:get,
+        'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=invalid_routine&param_1=value_1',
+        :body => 'ERROR: Invalid routine called. (5b97895d)'
+      )
+    end
+
+    should "raise InvalidRoutine error" do
+      assert_raise Rapidshare::API::Error::InvalidRoutineCalled do
+        Rapidshare::API.request(:invalid_routine, {:param_1 => "value_1"})
+      end
+    end
+  end
+
+  context "get_account_details method" do
+    setup do
+      @account_details = @rs.api.get_account_details
+    end
+
+    should "return account details in hash" do
+      assert_instance_of Hash, @account_details
+    end
+
+    should "return corrent account details" do
+      assert_equal @account_details, {
+        :accountid=>"12345",
+        :servertime=>"1217244932",
+        :addtime=>"127273393",
+        :username=>"valid_account",
+        :directstart=>"1",
+        :country=>"CZ",
+        :mailflags=>nil,
+        :language=>nil,
+        :jsconfig=>"1000",
+        :email=>"valid_account@email.com",
+        :curfiles=>"100",
+        :curspace=>"103994340",
+        :rapids=>"100",
+        :billeduntil=>"1320093121",
+        :nortuntil=>"1307123910",
+        :cookie=>@cookie
+      }
+    end
+  end
+
+  context "checkfiles method" do
     setup do
       FakeWeb.register_uri(:get,
         "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=checkfiles&files=829628035&filenames=HornyRhinos.jpg&cookie=#{@cookie}",
@@ -58,20 +104,7 @@ class ApiTest < Test::Unit::TestCase
     end
   end  
 
-  context "Invalid method call" do
-    setup do
-      FakeWeb.register_uri(:get,
-        'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=invalid_routine&param_1=value_1',
-        :body => 'ERROR: Invalid routine called. (5b97895d)'
-      )
-    end
-
-    should "raise InvalidRoutine error" do
-      assert_raise Rapidshare::API::Error::InvalidRoutineCalled do
-        Rapidshare::API.request(:invalid_routine, {:param_1 => "value_1"})
-      end
-    end
-  end
+  # helper methods
 
   context "text_to_hash method" do
     should "convert text in specific format to hash" do
