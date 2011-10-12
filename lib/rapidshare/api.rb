@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+# TODO get rid of this requirement, I don't think it's even needed anymore
 require "cgi"
 # TODO replace with Net::HTTPS or Curb
 require "httparty"

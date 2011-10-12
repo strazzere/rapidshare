@@ -17,6 +17,16 @@ class ApiTest < Test::Unit::TestCase
     end
   end
 
+  context "initialize method" do
+    setup do
+      @api = Rapidshare::API.new('valid_login','valid_password')
+    end
+
+    should "have cookie" do
+      assert_equal @cookie, @api.cookie
+    end
+  end
+
   context "get_account_details method" do
     setup do
       @account_details = @rs.api.get_account_details
