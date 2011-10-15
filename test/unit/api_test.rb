@@ -116,6 +116,29 @@ class ApiTest < Test::Unit::TestCase
 
   # helper methods
 
+  context "decode_file_status method" do
+    should "return :ok symbol if RapidShare file can be downloaded" do
+      assert_equal :ok, Rapidshare::API.decode_file_status(1)
+    end
+
+    should "return :error symbol if RapidShare file cannot be downloaded" do
+      error_status_codes = [ 0, 2, 3, 4, 100 ]      
+      assert_equal [:error], error_status_codes.map { |status_code| Rapidshare::API.decode_file_status(status_code) }.uniq
+    end
+  end
+
+  context "fileid_and_filename method" do
+    should "return file_id and file_name in array from valid rapidshare link" do
+      assert_equal ['', ''], @rs.api.fileid_and_filename('')
+    end
+
+    should "return array of empty strings for invalid rapidshare link" do
+      url = 'https://rapidshare.com/files/829628035/HornyRhinos.jpg'
+      assert_instance_of Array, @rs.api.fileid_and_filename(url)
+      assert_equal ['829628035', 'HornyRhinos.jpg'], @rs.api.fileid_and_filename(url)
+    end
+  end
+
   context "text_to_hash method" do
     should "convert text in specific format to hash" do
       assert_equal @rs.api.text_to_hash(" key1=value1 \n\tkey2=value2"),
@@ -131,18 +154,6 @@ class ApiTest < Test::Unit::TestCase
         :curspace=>"103994340", :rapids=>"100", :billeduntil=>"1320093121",
         :nortuntil=>"1307123910",
         :cookie=>"F0EEB41B38363A41F0D125102637DB7236468731F8DB760DC57934B4714C8D13"}
-    end
-  end
-
-  context "fileid_and_filename method" do
-    should "return file_id and file_name in array from valid rapidshare link" do
-      assert_equal ['', ''], @rs.api.fileid_and_filename('')
-    end
-
-    should "return array of empty strings for invalid rapidshare link" do
-      url = 'https://rapidshare.com/files/829628035/HornyRhinos.jpg'
-      assert_instance_of Array, @rs.api.fileid_and_filename(url)
-      assert_equal ['829628035', 'HornyRhinos.jpg'], @rs.api.fileid_and_filename(url)
     end
   end
 
