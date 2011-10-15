@@ -5,6 +5,7 @@ require 'test/unit'
 require 'shoulda'
 require 'turn'
 require 'fakeweb'
+require 'mocha'
 
 require 'rapidshare'
 

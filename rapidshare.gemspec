@@ -34,4 +34,5 @@ Gem::Specification.new do |s|
   # PS: turn 0.8.3 breaks tests with minitest bug
   s.add_development_dependency('turn', '0.8.2')
   s.add_development_dependency('fakeweb', '~> 1.3')
+  s.add_development_dependency('mocha', '~> 0.10')
 end
