@@ -8,4 +8,5 @@ examples/*.avi
 examples/*.rar
 *.gem
 .bundle
+.rvmrc
 Gemfile.lock
