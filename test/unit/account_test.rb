@@ -20,7 +20,7 @@ class AccountTest < Test::Unit::TestCase
     end    
   end
 
-  context "Valid account login" do
+  context "Valid account" do
     setup do
       @cookie = 'F0EEB41B38363A41F0D125102637DB7236468731F8DB760DC57934B4714C8D13'
       
@@ -37,13 +37,37 @@ class AccountTest < Test::Unit::TestCase
       @rs = Rapidshare::Account.new('valid_login','valid_password')
     end
 
-    should "return valid username" do
-      assert_equal 'valid_account', @rs.data[:username]
-    end    
+    context "login" do
+      should "return valid username" do
+        assert_equal 'valid_account', @rs.data[:username]
+      end    
+  
+      should "return cookie" do
+        assert_equal @cookie, @rs.data[:cookie]
+      end
+    end
 
-    should "return cookie" do
-      assert_equal @cookie, @rs.data[:cookie]
-    end    
+    should "provide interface to RapidShare API" do
+      assert_instance_of Rapidshare::API, @rs.api
+      assert_equal @cookie, @rs.api.cookie
+    end
+
+    context "reload! method" do
+      should "reload Rapidshare account data" do
+        # PS: get_account_details method is tested in api_test
+        @rs.api.expects(:get_account_details)
+        @rs.reload!
+      end
+    end
+
+    context "download method" do
+      should "download file through Download class" do
+        # PS: downloading is tested in integration tests
+        Rapidshare::Download.any_instance.expects(:perform)
+        @rs.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
+      end
+    end
+  
   end
 
 end
