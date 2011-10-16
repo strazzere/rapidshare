@@ -114,6 +114,14 @@ class ApiTest < Test::Unit::TestCase
     end
   end  
 
+  context "download method" do
+    should "download file through Download class" do
+      # PS: downloading is tested in integration tests
+      Rapidshare::Download.any_instance.expects(:perform)
+      @rs.api.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
+    end
+  end
+
   # helper methods
 
   context "decode_file_status method" do

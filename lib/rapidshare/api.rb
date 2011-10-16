@@ -122,6 +122,18 @@ class Rapidshare::API
 
   alias check_files checkfiles
 
+  # Downloads file.
+  #
+  # Options:
+  # * *filename* (optional) - specifies filename under which the file will be
+  #   saved. Default: filename parsed from Rapidshare link.
+  # * *downloads_dir* (optional) - specifies directory into which downloaded files
+  #   will be saved. Default: current directory.
+  #
+  def download(file, options= {})
+    Rapidshare::Download.new(file, self, options).perform
+  end
+
   # Generates url path for Rapidshare request.
   #
   def self.build_path(action, params)

@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
-# this is slightly more advanced example of rapidshare download script
+# this script is using only Rapidshare::API class, not Rapidshare::Account
+# (Account class is just an interface to API, but API class can be used
+# completely on its own)
 
 require 'rubygems'
 require 'rapidshare'
@@ -19,7 +21,7 @@ settings = YAML::load(File.read(File.join(ENV['HOME'],'.rapidshare'))) rescue ni
 # alternatively, if YAML file doesn't exists, set rapidshare manually through hash
 settings ||= { :login => 'your_login', :password => 'your_password' }
  
-rs = Rapidshare::Account.new(settings[:login], settings[:password])
+rs = Rapidshare::API.new(settings[:login], settings[:password])
 
 # TODO integrate queue parsing into Rapidshare::Account
 settings[:queue] ||= 'queue_example.txt'
@@ -31,6 +33,6 @@ end
 settings[:downloads_dir] ||= Dir.pwd
 
 files_to_download.each do |file|
-  result = rs.download(file, { :downloads_dir => settings[:downloads_dir] })
+  result = rs.download(file, :downloads_dir => settings[:downloads_dir])
   puts "[#{file}] cannot be downloaded: #{result.error}" unless result.downloaded? 
 end

@@ -61,9 +61,8 @@ class AccountTest < Test::Unit::TestCase
     end
 
     context "download method" do
-      should "download file through Download class" do
-        # PS: downloading is tested in integration tests
-        Rapidshare::Download.any_instance.expects(:perform)
+      should "download file through API class" do
+        @rs.api.expects(:download)
         @rs.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
       end
     end

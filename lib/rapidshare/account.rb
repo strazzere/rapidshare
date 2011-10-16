@@ -30,7 +30,7 @@ class Rapidshare::Account
   #   will be saved. Default: current directory.
   #
   def download(file, options = {})
-    Rapidshare::Download.new(file, api, options).perform
+    api.download(file, options)
   end
 
 end
