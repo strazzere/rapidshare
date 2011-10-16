@@ -10,8 +10,12 @@ class Rapidshare::Account
   
   # Logs into Rapidshare account as a premium user.
   # 
-  def initialize(login, password)
-    @api = Rapidshare::API.new(login, password)
+  # Params:
+  # * *login* - premium account login
+  # * *password* - premium account password
+  #
+  def initialize(params = {})
+    @api = Rapidshare::API.new(params)
     @data = @api.get_account_details
   end
   

@@ -29,7 +29,7 @@ Rapidshare::API.debug(false)
 ### Login ###
 
 ```ruby
-my_account = Rapidshare::Account.new('my_login','my_password')
+my_account = Rapidshare::Account.new(:login => 'my_login', :password => 'my_password')
 ```
 
 View account details:

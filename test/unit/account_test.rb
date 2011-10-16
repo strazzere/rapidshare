@@ -15,7 +15,7 @@ class AccountTest < Test::Unit::TestCase
 
     should "raise LoginFailed error" do
       assert_raise Rapidshare::API::Error::LoginFailed do
-        Rapidshare::Account.new('my_login','my_password')
+        Rapidshare::Account.new(:login => 'my_login', :password => 'my_password')
       end
     end    
   end
@@ -30,11 +30,11 @@ class AccountTest < Test::Unit::TestCase
       )
 
       FakeWeb.register_uri(:get,
-        "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getaccountdetails&withcookie=1&cookie=#{@cookie}",
+        "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getaccountdetails&cookie=#{@cookie}",
         :body => read_fixture('getaccountdetails_valid.txt')
       )
 
-      @rs = Rapidshare::Account.new('valid_login','valid_password')
+      @rs = Rapidshare::Account.new(:login => 'valid_login', :password => 'valid_password')
     end
 
     context "login" do

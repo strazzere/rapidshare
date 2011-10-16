@@ -21,7 +21,7 @@ settings = YAML::load(File.read(File.join(ENV['HOME'],'.rapidshare'))) rescue ni
 # alternatively, if YAML file doesn't exists, set rapidshare manually through hash
 settings ||= { :login => 'your_login', :password => 'your_password' }
  
-rs = Rapidshare::API.new(settings[:login], settings[:password])
+rs = Rapidshare::API.new(:login => settings[:login], :password => settings[:password])
 
 # TODO integrate queue parsing into Rapidshare::Account
 settings[:queue] ||= 'queue_example.txt'

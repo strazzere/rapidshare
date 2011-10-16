@@ -9,7 +9,7 @@ files_to_download = %w{
   https://rapidshare.com/files/766059293/ElegantElephants.jpg
 }
 
-rs = Rapidshare::API.new('my_login','my_password')
+rs = Rapidshare::API.new(:login => 'my_login', :password => 'my_password')
 
 files_to_download.each do |file|
   result = rs.download(file)

@@ -35,11 +35,11 @@ class Test::Unit::TestCase
     )
 
     FakeWeb.register_uri(:get,
-      "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getaccountdetails&withcookie=1&cookie=#{@cookie}",
+      "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getaccountdetails&cookie=#{@cookie}",
       :body => read_fixture('getaccountdetails_valid.txt')
     )
 
-    @rs = Rapidshare::Account.new('valid_login','valid_password')    
+    @rs = Rapidshare::Account.new(:login => 'valid_login', :password => 'valid_password')    
   end
 
 end

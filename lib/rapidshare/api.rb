@@ -20,17 +20,16 @@ class Rapidshare::API
 
   ERROR_PREFIX = "ERROR: " unless defined?(ERROR_PREFIX)
 
-  # Connects to Rapidshare API: logs in, retrieves cookie and account details.
+  # Connects to Rapidshare API (which basically means: uses login and password
+  # to retrieve cookie for future service calls)
   #
   # Params:
   # * *login* - premium account login
   # * *password* - premium account password
   #
-  def initialize(login, password)
-    params = { :login => login, :password => password, :withcookie => 1 }
-    response = request(:getaccountdetails, params)
-    data = text_to_hash(response)
-    @cookie = data[:cookie]
+  def initialize(params)
+    response = getaccountdetails(params.merge(:withcookie => 1))
+    @cookie = response[:cookie]
   end
 
   def self.debug(debug)
@@ -71,8 +70,8 @@ class Rapidshare::API
 
   # Returns account details in hash.
   #
-  def getaccountdetails
-    response = request(:getaccountdetails, :withcookie => 1)
+  def getaccountdetails(params = {})
+    response = request(:getaccountdetails, params)
     text_to_hash(response)
   end
 
