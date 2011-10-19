@@ -26,10 +26,17 @@ class Rapidshare::API
   # Params:
   # * *login* - premium account login
   # * *password* - premium account password
+  # * *cookie* - cookie can be provided instead of login and password
   #
   def initialize(params)
-    response = getaccountdetails(params.merge(:withcookie => 1))
-    @cookie = response[:cookie]
+    if params[:cookie]
+      @cookie = params[:cookie]
+      # throws LoginFailed exception if cookie is invalid
+      get_account_details()
+    else
+      response = get_account_details(params.merge(:withcookie => 1))
+      @cookie = response[:cookie]
+    end
   end
 
   def self.debug(debug)

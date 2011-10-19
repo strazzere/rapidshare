@@ -19,12 +19,39 @@ class ApiTest < Test::Unit::TestCase
 
   context "initialize method" do
     setup do
-      @api = Rapidshare::API.new(:login => 'valid_login', :password => 'valid_password')
+      FakeWeb.register_uri(:get,
+        'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getaccountdetails&cookie=&login=invalid_login&password=invalid_password&withcookie=1',
+        :body => 'ERROR: Login failed. Password incorrect or account not found. (221a75e5)'
+      )
+      
+      FakeWeb.register_uri(:get,
+        'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getaccountdetails&cookie=invalid_cookie',
+        :body => 'ERROR: Login failed. Login data invalid. (0320f9f0)'
+      )      
     end
-
+    
     should "have cookie" do
+      @api = Rapidshare::API.new(:login => 'valid_login', :password => 'valid_password')
       assert_equal @cookie, @api.cookie
     end
+
+    should "not require login if cookie is provided" do
+      @api = Rapidshare::API.new(:cookie => @cookie)
+      assert_equal @cookie, @api.cookie
+    end
+
+    should "raise LoginFailed exception for invalid login data" do
+      assert_raise(Rapidshare::API::Error::LoginFailed) do
+        Rapidshare::API.new(:login => 'invalid_login', :password => 'invalid_password')
+      end
+    end
+
+    should "raise LoginFailed exception for invalid cookie" do
+      assert_raise(Rapidshare::API::Error::LoginFailed) do
+        Rapidshare::API.new(:cookie => 'invalid_cookie')
+      end
+    end
+
   end
 
   context "get_account_details method" do

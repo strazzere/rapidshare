@@ -23,6 +23,11 @@ settings ||= { :login => 'your_login', :password => 'your_password' }
  
 rs = Rapidshare::API.new(:login => settings[:login], :password => settings[:password])
 
+# instead of login and password, you can just set cookie
+# rs = Rapidshare::API.new(:cookie => settings[:cookie])
+# or just
+# rs = Rapidshare::API.new(settings)
+
 # TODO integrate queue parsing into Rapidshare::Account
 settings[:queue] ||= 'queue_example.txt'
 files_to_download = File.read(settings[:queue]).split(/\s*\n\s*/).select do |line|
