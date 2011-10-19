@@ -29,7 +29,7 @@ class ApiTest < Test::Unit::TestCase
 
   context "get_account_details method" do
     setup do
-      @account_details = @rs.api.get_account_details
+      @account_details = @rs.get_account_details
     end
 
     should "return account details in hash" do
@@ -88,7 +88,7 @@ class ApiTest < Test::Unit::TestCase
     end
     
     should "return information about file" do
-      file_info = @rs.api.checkfiles(@files.first)
+      file_info = @rs.checkfiles(@files.first)
       assert_instance_of Array, file_info 
       assert_equal 1, file_info.size
       assert_equal :ok, file_info.first[:file_status]
@@ -99,18 +99,18 @@ class ApiTest < Test::Unit::TestCase
     end
 
     should "accept single file or array" do
-      assert_equal 3, @rs.api.checkfiles(@files).size
-      assert_equal 3, @rs.api.checkfiles(@files[0], @files[1], @files[2]).size
-      assert_equal 1, @rs.api.checkfiles(@files.first).size
+      assert_equal 3, @rs.checkfiles(@files).size
+      assert_equal 3, @rs.checkfiles(@files[0], @files[1], @files[2]).size
+      assert_equal 1, @rs.checkfiles(@files.first).size
     end
     
     should "raise error if called without file parameters" do
-      assert_raise(Rapidshare::API::Error) { @rs.api.checkfiles }
-      assert_raise(Rapidshare::API::Error) { @rs.api.checkfiles('') }
+      assert_raise(Rapidshare::API::Error) { @rs.checkfiles }
+      assert_raise(Rapidshare::API::Error) { @rs.checkfiles('') }
     end
 
     should "raise error if called with obviously invalid files" do
-      assert_raise(Rapidshare::API::Error) { @rs.api.checkfiles('http://server/file') }
+      assert_raise(Rapidshare::API::Error) { @rs.checkfiles('http://server/file') }
     end
   end  
 
@@ -118,7 +118,7 @@ class ApiTest < Test::Unit::TestCase
     should "download file through Download class" do
       # PS: downloading is tested in integration tests
       Rapidshare::Download.any_instance.expects(:perform)
-      @rs.api.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
+      @rs.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
     end
   end
 
@@ -137,24 +137,24 @@ class ApiTest < Test::Unit::TestCase
 
   context "fileid_and_filename method" do
     should "return file_id and file_name in array from valid rapidshare link" do
-      assert_equal ['', ''], @rs.api.fileid_and_filename('')
+      assert_equal ['', ''], @rs.fileid_and_filename('')
     end
 
     should "return array of empty strings for invalid rapidshare link" do
       url = 'https://rapidshare.com/files/829628035/HornyRhinos.jpg'
-      assert_instance_of Array, @rs.api.fileid_and_filename(url)
-      assert_equal ['829628035', 'HornyRhinos.jpg'], @rs.api.fileid_and_filename(url)
+      assert_instance_of Array, @rs.fileid_and_filename(url)
+      assert_equal ['829628035', 'HornyRhinos.jpg'], @rs.fileid_and_filename(url)
     end
   end
 
   context "text_to_hash method" do
     should "convert text in specific format to hash" do
-      assert_equal @rs.api.text_to_hash(" key1=value1 \n\tkey2=value2"),
+      assert_equal @rs.text_to_hash(" key1=value1 \n\tkey2=value2"),
         { :key1 => 'value1', :key2 => 'value2' }
     end
 
     should "convert rapidshare text response to hash" do
-      assert_equal @rs.api.text_to_hash(read_fixture('getaccountdetails_valid.txt')),
+      assert_equal @rs.text_to_hash(read_fixture('getaccountdetails_valid.txt')),
         {:accountid=>"12345", :servertime=>"1217244932", :addtime=>"127273393",
         :username=>"valid_account", :directstart=>"1", :country=>"CZ",
         :mailflags=>nil, :language=>nil, :jsconfig=>"1000",

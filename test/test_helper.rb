@@ -39,7 +39,7 @@ class Test::Unit::TestCase
       :body => read_fixture('getaccountdetails_valid.txt')
     )
 
-    @rs = Rapidshare::Account.new(:login => 'valid_login', :password => 'valid_password')    
+    @rs = Rapidshare::API.new(:login => 'valid_login', :password => 'valid_password')    
   end
 
 end

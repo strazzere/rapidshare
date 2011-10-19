@@ -7,17 +7,17 @@ class DownloadTest < Test::Unit::TestCase
     super
     
     @file = 'https://rapidshare.com/files/829628035/HornyRhinos.jpg'
-    @downloader = Rapidshare::Download.new(@file, @rs.api)
+    @downloader = Rapidshare::Download.new(@file, @rs)
   end
   
   context "initialize method" do
     should "enable overriding filename attribute" do
-      @downloader = Rapidshare::Download.new(@file, @rs.api, :save_as => 'picture_of_rhinos.jpg')
+      @downloader = Rapidshare::Download.new(@file, @rs, :save_as => 'picture_of_rhinos.jpg')
       assert_equal 'picture_of_rhinos.jpg', @downloader.filename
     end
 
     should "enable overriding downloads_dir attribute" do
-      @downloader = Rapidshare::Download.new(@file, @rs.api, :downloads_dir => '/tmp')
+      @downloader = Rapidshare::Download.new(@file, @rs, :downloads_dir => '/tmp')
       assert_equal '/tmp', @downloader.downloads_dir
     end
   end
@@ -57,7 +57,7 @@ class DownloadTest < Test::Unit::TestCase
 
   context "check method for invalid file" do
     setup do
-      @downloader = Rapidshare::Download.new('', @rs.api)
+      @downloader = Rapidshare::Download.new('', @rs)
       @check_result = @downloader.check
     end
     
@@ -75,8 +75,7 @@ class DownloadTest < Test::Unit::TestCase
   
   context "perfom method for invalid file" do
     setup do
-      @downloader = Rapidshare::Download.new('', @rs.api)
-      @downloader.perform
+      @downloader = @rs.download('')
     end
 
     should "not download anything" do

@@ -21,18 +21,16 @@ class DownloadTest < Test::Unit::TestCase
     Dir.mkdir(@@downloads_dir) unless File.exists?(@@downloads_dir)
     File.delete(@@file_path) if File.exists?(@@file_path)
 
-    settings = YAML::load(File.read(File.join(ENV['HOME'],'.rapidshare'))) rescue nil
+    settings = YAML::load(File.read(File.join(ENV['HOME'],'.rapidshare'))) rescue {}
   
-    @rs = Rapidshare::Account.new(settings[:login], settings[:password])
+    @rs = Rapidshare::API.new(settings)
 
     @file = 'https://rapidshare.com/files/829628035/HornyRhinos.jpg'
-      
-    @downloader = Rapidshare::Download.new(@file, @rs.api,
-      :downloads_dir => @@downloads_dir, :save_as => @@filename
-    )
 
     # PS: FakeWeb ignores Curb requests
-    @downloader.perform
+    @downloader = @rs.download(@file,
+      :downloads_dir => @@downloads_dir, :save_as => @@filename
+    )   
   end
   
   def teardown
