@@ -17,40 +17,41 @@ gem install rapidshare
 
 ```ruby
 require 'rapidshare'
+
+files_to_download = %w{
+  https://rapidshare.com/files/829628035/HornyRhinos.jpg
+  https://rapidshare.com/files/428232373/HappyHippos.jpg
+  https://rapidshare.com/files/766059293/ElegantElephants.jpg
+}
+
+rs = Rapidshare::API.new(:login => 'my_login', :password => 'my_password')
+
+files_to_download.each do |file|
+  result = rs.download(file)
+  puts "[#{file}] cannot be downloaded: #{result.error}" unless result.downloaded? 
+end
 ```
 
-### Turn Debug mode on/off ###
+### Get Account Details ###
 
 ```ruby
-Rapidshare::API.debug(true)
-Rapidshare::API.debug(false)
-```
-
-### Login ###
-
-```ruby
-my_account = Rapidshare::Account.new(:login => 'my_login', :password => 'my_password')
-```
-
-View account details:
-
-```ruby
-my_account.data
+rs.get_account_details
 ```
 
 ### Check Files ###
 
 ```ruby
-my_account.api.checkfiles(
+rs.check_files(
   'https://rapidshare.com/files/829628035/HornyRhinos.jpg',
-  'https://rapidshare.com/files/428232373/HappyHippos.jpg'
+  'https://rapidshare.com/files/428232373/HappyHippos.jpg',
+  'https://rapidshare.com/files/766059293/ElegantElephants.jpg'
 )
 ```
 
 ### Download File ###
 
 ```ruby
-my_account.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
+rs.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
 ```
 
 ## Examples ##
