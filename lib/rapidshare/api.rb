@@ -14,6 +14,11 @@ class Rapidshare::API
 
   ERROR_PREFIX = "ERROR: " unless defined?(ERROR_PREFIX)
 
+  # custom errors for Rapidshare::API class
+  class Error < StandardError; end
+  class Error::LoginFailed < StandardError; end
+  class Error::InvalidRoutineCalled < StandardError; end
+
   # Request method uses this string to construct GET requests
   #
   URL = 'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=%s&%s'

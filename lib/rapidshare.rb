@@ -9,5 +9,4 @@ require 'active_support/core_ext/hash/keys'
 
 require "rapidshare/rapidshare"
 require "rapidshare/api"
-require "rapidshare/error"
 require "rapidshare/download"
