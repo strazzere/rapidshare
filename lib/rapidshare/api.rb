@@ -1,8 +1,5 @@
 # encoding: utf-8
 
-# TODO replace with Net::HTTPS or Curb
-require "httparty"
-
 # Provides interface to RapidShare API.
 #
 # HTTPS requests are used by default, as recommended by RapidShare API

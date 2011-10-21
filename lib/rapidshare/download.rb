@@ -1,8 +1,5 @@
 # encoding: utf-8
 
-require 'curb'
-require 'progressbar'
-
 # Downloads files from Rapidshare. Separate from +Rapidshare::API+ class because
 # downloading is much more complex than other service calls.
 #
