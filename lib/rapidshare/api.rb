@@ -9,13 +9,14 @@
 #   Rapidshare::API.get('https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=...')
 #
 class Rapidshare::API
-  include HTTParty
-
-  base_uri 'https://api.rapidshare.com'
 
   attr_reader :cookie
 
   ERROR_PREFIX = "ERROR: " unless defined?(ERROR_PREFIX)
+
+  # Request method uses this string to construct GET requests
+  #
+  URL = 'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=%s&%s'
 
   # Connects to Rapidshare API (which basically means: uses login and password
   # to retrieve cookie for future service calls)
@@ -45,19 +46,19 @@ class Rapidshare::API
   # Throws exception if error is received from RapidShare API.
   #
   # Params:
-  # * *action* - service name, for example +checkfiles+
+  # * *service_name* - name of the RapidShare service, for example +checkfiles+
   # * *params* - hash of service parameters
   #
-  def self.request(action, params = {})
-    path = self.build_path(action, params)
+  def self.request(service_name, params = {})
+      
+    response = self.get(URL % [service_name, params.to_query]).body
     
-    response = self.get(path)
     if response.start_with?(ERROR_PREFIX)
       case error = response.sub(ERROR_PREFIX, "").split('.').first
         when "Login failed"
           raise Rapidshare::API::Error::LoginFailed
         when "Invalid routine called"
-          raise Rapidshare::API::Error::InvalidRoutineCalled.new(action)
+          raise Rapidshare::API::Error::InvalidRoutineCalled.new(service_name)
         else
           raise Rapidshare::API::Error.new(error)
         end
@@ -67,9 +68,8 @@ class Rapidshare::API
 
   # Provides instance interface to class method +request+.
   #
-  def request(action, params = {})
-    params.merge!(:cookie => cookie)
-    self.class.request(action, params)
+  def request(service_name, params = {})
+    self.class.request(service_name, params.merge(:cookie => @cookie))
   end
 
   # Returns account details in hash.
@@ -135,10 +135,15 @@ class Rapidshare::API
     Rapidshare::Download.new(file, self, options).perform
   end
 
-  # Generates url path for Rapidshare request.
-  #
-  def self.build_path(action, params)
-    "/cgi-bin/rsapi.cgi?sub=#{action}&#{params.to_query}"
+  # helper methods
+
+  # Provides interface for GET requests
+  # 
+  def self.get(url)
+    url = URI.parse(url)
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = (url.scheme == 'https')
+    http.get URI::escape(url.request_uri)
   end
 
   # Convert file status code (returned by checkfiles method) to +:ok+ or +:error+ symbol.

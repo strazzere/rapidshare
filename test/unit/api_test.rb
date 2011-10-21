@@ -93,7 +93,7 @@ class ApiTest < Test::Unit::TestCase
       )
 
       FakeWeb.register_uri(:get,
-        "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=checkfiles&files=829628035%2C428232373%2C766059293&filenames=HornyRhinos.jpg%2CHappyHippos.jpg%2CElegantElephants.jpg&cookie=#{@cookie}",
+        "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=checkfiles&cookie=#{@cookie}&filenames=HornyRhinos.jpg%252CHappyHippos.jpg%252CElegantElephants.jpg&files=829628035%252C428232373%252C766059293",
         :body => read_fixture('checkfiles_multi.txt')
       )
 

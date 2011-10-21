@@ -1,7 +1,6 @@
 # encoding: utf-8
 
-# TODO replace with Net::HTTPS or Curb
-require "httparty"
+require 'net/https'
 require 'curb'
 require 'progressbar'
 # active_support cherry-picks
