@@ -46,16 +46,35 @@ class Rapidshare::API
     debug_output debug ? $stderr : false
   end
 
+  # TODO this class is getting long. keep general request-related and helper
+  # method here and move specific method calls like :getaccountdetails to other
+  # class (service)? 
+  #
+  # TODO enable users to define their own parsers and pass them as code blocks?
+  # not really that practical, but it would be a cool piece of code :)
+
   # Calls specific RapidShare API service and returns result.
   #
   # Throws exception if error is received from RapidShare API.
   #
   # Params:
   # * *service_name* - name of the RapidShare service, for example +checkfiles+
-  # * *params* - hash of service parameters
+  # * *params* - hash of service parameters and options (listed below)
+  # * *parser* - option, determines how the response body will be parsed:
+  #   * *none* - default value, returns response body as it is
+  #   * *csv* - comma-separated values, for example: _getrapidtranslogs_.
+  #     Returns array or arrays, one array per each line.
+  #   * *hash* - lines with key and value separated by "=", for example:
+  #     _getaccountdetails_. Returns hash.
   #
   def self.request(service_name, params = {})
-      
+    params.symbolize_keys!
+    
+    parser = (params.delete(:parser) || :none).to_sym
+    unless [:none, :csv, :hash].include?(parser)
+      raise Rapidshare::API::Error.new("Invalid parser for request method: #{parser}")
+    end
+
     response = self.get(URL % [service_name, params.to_query]).body
     
     if response.start_with?(ERROR_PREFIX)
@@ -68,13 +87,30 @@ class Rapidshare::API
           raise Rapidshare::API::Error.new(error)
         end
     end
-    response
+    
+    self.parse_response(parser, response)
   end
 
   # Provides instance interface to class method +request+.
   #
   def request(service_name, params = {})
     self.class.request(service_name, params.merge(:cookie => @cookie))
+  end
+
+  # Parses response from +request+ method (parser options are listed there)
+  #
+  def self.parse_response(parser, response)    
+    case parser.to_sym
+      when :none
+        response
+      when :csv
+        # PS: we could use gem for csv parsing, but that's an overkill in this
+        # case, IMHO
+        response.to_s.strip.split(/\s*\n\s*/).map { |line| line.split(',') }
+      when :hash
+        Hash[ response.to_s.strip.split(/\s*\n\s*/).map { |line| line.split('=') } ]
+    end
+  
   end
 
   # Returns account details in hash.

@@ -2,7 +2,7 @@ require 'test_helper'
 
 class ApiTest < Test::Unit::TestCase
 
-  context "Invalid method call" do
+  context "calling invalid method" do
     setup do
       FakeWeb.register_uri(:get,
         'https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=invalid_routine&param_1=value_1',
@@ -52,6 +52,50 @@ class ApiTest < Test::Unit::TestCase
       end
     end
 
+  end
+
+  context "request method" do
+    setup do
+      FakeWeb.register_uri(:get,
+        "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getrapidtranslogs&cookie=#{@cookie}",
+        :body => read_fixture('getrapidtranslogs.txt')
+      )
+    end
+    
+    should "return response body as it is by default" do
+      assert_equal @rs.request(:getrapidtranslogs), read_fixture('getrapidtranslogs.txt')
+    end
+
+    should "optionally parse response like CSV file" do
+      response = @rs.request(:getrapidtranslogs, :parser => 'csv')
+      assert_equal 5, response.size
+      assert_equal response.last,
+        ['1278352832', '0', '-4', 'Daily account billing (Events in July 2010)']
+    end
+
+    should "optionally parse response like key=value hash" do
+      response = @rs.request(:getaccountdetails, :parser => 'hash')
+      assert_instance_of Hash, response
+      assert_equal response,
+        {
+          "rapids"=>"100",
+          "curfiles"=>"100",
+          "country"=>"CZ",
+          "billeduntil"=>"1320093121",
+          "jsconfig"=>"1000",
+          "language"=>nil,
+          "username"=>"valid_account",
+          "nortuntil"=>"1307123910",
+          "addtime"=>"127273393",
+          "cookie"=>@cookie,
+          "mailflags"=>nil,
+          "directstart"=>"1",
+          "servertime"=>"1217244932",
+          "curspace"=>"103994340",
+          "email"=>"valid_account@email.com",
+          "accountid"=>"12345"
+        }
+    end
   end
 
   context "get_account_details method" do
