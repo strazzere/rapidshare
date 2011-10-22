@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+require 'rubygems'
 require 'net/https'
 require 'curb'
 require 'progressbar'
