@@ -6,6 +6,7 @@
 
 require 'rubygems'
 require 'rapidshare'
+require 'yaml'
 
 # load rapidshare settings from YAML file
 # 
@@ -16,7 +17,7 @@ require 'rapidshare'
 #  :queue: 'path_to_queue/queue_file'
 #  :downloads_dir: 'path_to_downloads_dir'
 #
-settings = YAML::load(File.read(File.join(ENV['HOME'],'.rapidshare'))) rescue nil
+settings = YAML::load(File.read(File.join(ENV['HOME'],'.rapidshare')))
 
 # alternatively, if YAML file doesn't exists, set rapidshare manually through hash
 settings ||= { :login => 'your_login', :password => 'your_password' }
