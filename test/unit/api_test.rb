@@ -77,24 +77,12 @@ class ApiTest < Test::Unit::TestCase
       response = @rs.request(:getaccountdetails, :parser => 'hash')
       assert_instance_of Hash, response
       assert_equal response,
-        {
-          "rapids"=>"100",
-          "curfiles"=>"100",
-          "country"=>"CZ",
-          "billeduntil"=>"1320093121",
-          "jsconfig"=>"1000",
-          "language"=>nil,
-          "username"=>"valid_account",
-          "nortuntil"=>"1307123910",
-          "addtime"=>"127273393",
-          "cookie"=>@cookie,
-          "mailflags"=>nil,
-          "directstart"=>"1",
-          "servertime"=>"1217244932",
-          "curspace"=>"103994340",
-          "email"=>"valid_account@email.com",
-          "accountid"=>"12345"
-        }
+        { :rapids=>"100", :curfiles=>"100", :country=>"CZ",
+        :billeduntil=>"1320093121", :jsconfig=>"1000", :language=>nil,
+        :username=>"valid_account", :nortuntil=>"1307123910",
+        :addtime=>"127273393", :cookie=>@cookie, :mailflags=>nil,
+        :directstart=>"1", :servertime=>"1217244932", :curspace=>"103994340",
+        :email=>"valid_account@email.com", :accountid=>"12345" }
     end
   end
 
@@ -108,24 +96,13 @@ class ApiTest < Test::Unit::TestCase
     end
 
     should "return corrent account details" do
-      assert_equal @account_details, {
-        :accountid=>"12345",
-        :servertime=>"1217244932",
-        :addtime=>"127273393",
-        :username=>"valid_account",
-        :directstart=>"1",
-        :country=>"CZ",
-        :mailflags=>nil,
-        :language=>nil,
-        :jsconfig=>"1000",
-        :email=>"valid_account@email.com",
-        :curfiles=>"100",
-        :curspace=>"103994340",
-        :rapids=>"100",
-        :billeduntil=>"1320093121",
-        :nortuntil=>"1307123910",
-        :cookie=>@cookie
-      }
+      assert_equal @account_details,
+        {:accountid=>"12345", :servertime=>"1217244932", :addtime=>"127273393",
+        :username=>"valid_account", :directstart=>"1", :country=>"CZ",
+        :mailflags=>nil, :language=>nil, :jsconfig=>"1000",
+        :email=>"valid_account@email.com", :curfiles=>"100",
+        :curspace=>"103994340", :rapids=>"100", :billeduntil=>"1320093121",
+        :nortuntil=>"1307123910", :cookie=>@cookie }
     end
   end
 
@@ -220,19 +197,18 @@ class ApiTest < Test::Unit::TestCase
 
   context "text_to_hash method" do
     should "convert text in specific format to hash" do
-      assert_equal @rs.text_to_hash(" key1=value1 \n\tkey2=value2"),
+      assert_equal Rapidshare::API.text_to_hash(" key1=value1 \n\tkey2=value2"),
         { :key1 => 'value1', :key2 => 'value2' }
     end
 
     should "convert rapidshare text response to hash" do
-      assert_equal @rs.text_to_hash(read_fixture('getaccountdetails_valid.txt')),
+      assert_equal Rapidshare::API.text_to_hash(read_fixture('getaccountdetails_valid.txt')),
         {:accountid=>"12345", :servertime=>"1217244932", :addtime=>"127273393",
         :username=>"valid_account", :directstart=>"1", :country=>"CZ",
         :mailflags=>nil, :language=>nil, :jsconfig=>"1000",
         :email=>"valid_account@email.com", :curfiles=>"100",
         :curspace=>"103994340", :rapids=>"100", :billeduntil=>"1320093121",
-        :nortuntil=>"1307123910",
-        :cookie=>"F0EEB41B38363A41F0D125102637DB7236468731F8DB760DC57934B4714C8D13"}
+        :nortuntil=>"1307123910", :cookie=>@cookie }
     end
   end
 
