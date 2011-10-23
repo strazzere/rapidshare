@@ -110,7 +110,7 @@ module Rapidshare
           # case, IMHO
           response.to_s.strip.split(/\s*\n\s*/).map { |line| line.split(',') }
         when :hash
-          Hash[ response.to_s.strip.split(/\s*\n\s*/).map { |line| line.split('=') } ]
+          self.text_to_hash(response)
       end
     
     end
@@ -118,8 +118,7 @@ module Rapidshare
     # Returns account details in hash.
     #
     def getaccountdetails(params = {})
-      response = request(:getaccountdetails, params)
-      text_to_hash(response)
+      request :getaccountdetails, params.merge( :parser => :hash)
     end
   
     alias get_account_details getaccountdetails
@@ -218,7 +217,7 @@ module Rapidshare
     # Example:
     #   "key1=value1\nkey1=value2" -> { :key1 => 'value1', :key2 => 'value2' }
     #
-    def text_to_hash(response)
+    def self.text_to_hash(response)
       Hash[ response.strip.split(/\s*\n\s*/).map { |param| param.split('=') } ].symbolize_keys
     end
   
