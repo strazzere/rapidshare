@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   
   # development dependencies 
   s.add_development_dependency('yard', '~> 0.7')
+  s.add_development_dependency('rdiscount', '~> 1.6')
   s.add_development_dependency('rcov', '~> 0.9')
 
   # test dependencies 
