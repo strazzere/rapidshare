@@ -1,8 +1,0 @@
-
-## 0.5.0 ##
-
-* write documentation for all classes
-
-* cover current code with tests
-
-* replace HTTParty with Net::HTTPS or Curb
