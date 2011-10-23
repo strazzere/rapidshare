@@ -114,15 +114,30 @@ module Rapidshare
       end
     
     end
-  
+
+    # Attempts to do Rapidshare service call. If it doesn't recognize the method
+    # name, this gem assumes that user wants to make a Rapidshare service call.
+    #
+    # This method also handles aliases for service calls:
+    # get_account_details -> getaccountdetails
+    #    
+    def method_missing(service_name, params = {})
+      # remove user-friendly underscores from service namess
+      service_name = service_name.to_s.gsub('_', '')
+      
+      if respond_to?(service_name)
+        send(service_name, params)
+      else
+        request(service_name, params)
+      end
+    end  
+
     # Returns account details in hash.
     #
     def getaccountdetails(params = {})
       request :getaccountdetails, params.merge( :parser => :hash)
     end
-  
-    alias get_account_details getaccountdetails
-  
+    
     # Retrieves information about RapidShare files.
     #
     # *Input:* array of files
@@ -162,8 +177,6 @@ module Rapidshare
         }
       end
     end
-  
-    alias check_files checkfiles
   
     # Downloads file.
     #

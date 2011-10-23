@@ -86,6 +86,24 @@ class ApiTest < Test::Unit::TestCase
     end
   end
 
+  context "method_missing" do
+    setup do
+      FakeWeb.register_uri(:get,
+        "https://api.rapidshare.com/cgi-bin/rsapi.cgi?sub=getrapidtranslogs&cookie=#{@cookie}",
+        :body => read_fixture('getrapidtranslogs.txt')
+      )
+    end
+    
+    should "should redirect to request method" do
+      assert_equal @rs.getrapidtranslogs, read_fixture('getrapidtranslogs.txt')
+    end
+
+    should "should transform user-friendly aliases to correct method names" do
+      assert_equal @rs.get_rapid_trans_logs, read_fixture('getrapidtranslogs.txt')
+    end
+  end
+
+
   context "get_account_details method" do
     setup do
       @account_details = @rs.get_account_details
