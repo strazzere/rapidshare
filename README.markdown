@@ -62,6 +62,11 @@ As a rule of thumb, you can call these dedicated methods either by their
 Rapidshare name (example: +getaccountdetails+), or with properly underscored
 name (example: +get_account_details+).
 
+If you attempt to call unsupported service by its name (Rapidshare or
+underscored), +missing_method+ will call this service through a +request+
+method. For example: `rs.get_rapid_trans_logs` gets translated to
+`rs.request(:getrapidtranslogs)`
+
 ### Get Account Details ###
 
 ```ruby
