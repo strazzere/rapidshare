@@ -130,23 +130,37 @@ Let's say you want to call service for which rapidshare gem doesn't have
 dedicated method yet, for example: *getrapidtranslogs* . While you can
 explicitly call `API#request` method:
 
-`rs.request(:getrapidtranslogs, :parser => 'csv')`
+```ruby
+rs.request(:getrapidtranslogs, :parser => 'csv')
+```
 
 the cooler way is to make a service call using `API#method_missing`:
 
-`rs.getrapidtranslogs(:parser => 'csv')`
+```ruby
+rs.getrapidtranslogs(:parser => 'csv')
+```
 
 If you call an uknown method on `API` instance, `missing_method` assumes
 that you want to make a service call to Rapidshare and invokes the `request`
 method, using the missing method name as service name and passing any available
 params. For example:
 
-`rs.getrapidtranslogs(:parser => 'csv')` invokes `rs.request(:getrapidtranslogs, :parser => 'csv')`
+```ruby
+rs.getrapidtranslogs(:parser => 'csv')
+```
+
+invokes
+
+```ruby
+rs.request(:getrapidtranslogs, :parser => 'csv')
+```
 
 `method_missing` also removes any underscores from the service name, so these
 method calls are equivalent:
 
-`rs.getrapidtranslogs == rs.get_rapid_trans_logs`
+```ruby
+rs.getrapidtranslogs == rs.get_rapid_trans_logs
+```
 
 This is used for aliasing dedicated methods as well: `rs.get_account_details`
 invokes `rs.getaccountdetails`. In this case the corresponding dedicated
