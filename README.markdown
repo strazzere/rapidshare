@@ -41,14 +41,14 @@ end
 ## Login ##
 
 Rapidshare gem is meant to be used mostly by premium users. In order to call Rapidshare
-services as premium user, you need to log in first, using your  *login* and *password*.
+services as premium user, you need to log in first, using your login and password.
 
 ```ruby
 rs = Rapidshare::API.new(:login => 'my_login', :password => 'my_password')
 ```
 
-Alternatively you can use *cookie* parameter, which stores encrypted *login* and
-*password* parameters.
+Alternatively you can use *cookie* parameter, which stores encrypted login and
+password parameters.
 
 ```ruby
 rs = Rapidshare::API.new(:cookie => 'my_cookie')
@@ -87,6 +87,13 @@ rs.check_files(
 rs.download('https://rapidshare.com/files/829628035/HornyRhinos.jpg')
 ```
 
+**Download workflow:** file is checked by `API#check_files` method first. If it
+can be downloaded, progress bar is shown for download and afterwards `API`
+instance is returned with `downloaded` attribute set to *true*. If the file is
+invalid, `API` instance is returned with `downloaded` attribute set to (wait for
+it) *false*. (`downloaded` attribute is also accessible by `downloaded?`
+method.)
+
 ## Service Calls ##
 
 All calls to Rapidshare services are done internally by `API#request` method:
@@ -104,7 +111,7 @@ Rapidshare::API.request(:getaccountdetails, :login => 'my_login', :password => '
 ```
 
 Use this method to call Rapidshare services which don't have dedicated methods
-available in this gem.
+available.
 
 ### Parser Parameter ###
 
@@ -122,7 +129,7 @@ Example:
 rs.request(:getaccountdetails, :parser => :hash)
 ```
 
-PS: cookie is automatically added if you call request method on a Rapidshare instance 
+PS: cookie is automatically added if you call request method on a `API` instance.
 
 ### Method Missing ###
 
@@ -162,7 +169,7 @@ method calls are equivalent:
 rs.getrapidtranslogs == rs.get_rapid_trans_logs
 ```
 
-This is used for aliasing dedicated methods as well: `rs.get_account_details`
+PS: This is used for aliasing dedicated methods as well: `rs.get_account_details`
 invokes `rs.getaccountdetails`. In this case the corresponding dedicated
 method is called instead of low-level `request` method, because we check for
 existense of dedicated method first.
