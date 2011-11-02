@@ -176,7 +176,7 @@ existense of dedicated method first.
 
 ## Examples ##
 
-In [examples directory](./master/examples/) you will other examples of using
+In [examples directory](./rapidshare/tree/master/examples/) you will other examples of using
 Rapidshare gem. Among other things there are scripts which can serve as simple
 download clients.
 
