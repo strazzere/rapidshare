@@ -70,6 +70,9 @@ module Rapidshare
       bar.file_transfer_mode
   
       Curl::Easy.perform(self.download_link) do |curl|
+        # HOTFIX don't verify SSL peer certificate
+        curl.ssl_verify_peer = false
+
         curl.on_progress do |dl_total, dl_now|
           bar.set(dl_now)
           dl_now <= dl_total
