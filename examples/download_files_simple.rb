@@ -9,7 +9,16 @@ files_to_download = %w{
   https://rapidshare.com/files/766059293/ElegantElephants.jpg
 }
 
-rs = Rapidshare::API.new(:login => 'my_login', :password => 'my_password')
+rs = Rapidshare::API.new(
+                         :login => 'my_login',
+                         :password => 'my_password',
+                         :proxy => {
+                           :proxy_address => 'proxy.address.com',
+                           :proxy_port => '8888',
+                           :proxy_login => 'my_proxy_login',
+                           :proxy_password => 'my_proxy_password'
+                         }
+                         )
 
 files_to_download.each do |file|
   result = rs.download(file)

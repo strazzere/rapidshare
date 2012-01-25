@@ -33,7 +33,13 @@ module Rapidshare
     # * *password* - premium account password
     # * *cookie* - cookie can be provided instead of login and password
     #
+    # * *proxy* - proxy to use for connecting to rapidshare
+    #
     def initialize(params)
+      if params[:proxy] && params[:proxy][:proxy_address]
+        @proxy = params[:proxy]
+      end
+
       if params[:cookie]
         @cookie = params[:cookie]
         # throws LoginFailed exception if cookie is invalid
@@ -137,7 +143,7 @@ module Rapidshare
     def getaccountdetails(params = {})
       request :getaccountdetails, params.merge( :parser => :hash)
     end
-    
+
     # Retrieves information about RapidShare files.
     #
     # *Input:* array of files
@@ -196,7 +202,7 @@ module Rapidshare
     # 
     def self.get(url)
       url = URI.parse(url)
-      http = Net::HTTP.new(url.host, url.port)
+      http = Net::HTTP.new(url.host, url.port, @proxy.proxy_address, @proxy.proxy_port, @proxy.proxy_login, @proxy.proxy_password)
       http.use_ssl = (url.scheme == 'https')
       http.get URI::escape(url.request_uri)
     end
