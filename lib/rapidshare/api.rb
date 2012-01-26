@@ -36,8 +36,10 @@ module Rapidshare
     # * *proxy* - proxy to use for connecting to rapidshare
     #
     def initialize(params)
-      if params[:proxy] && params[:proxy][:proxy_address]
+      if !params[:proxy].nil? && !params[:proxy][:proxy_address].nil?
         @proxy = params[:proxy]
+      else
+        @proxy = {}
       end
 
       if params[:cookie]
@@ -75,7 +77,7 @@ module Rapidshare
     #   * *hash* - lines with key and value separated by "=", for example:
     #     _getaccountdetails_. Returns hash.
     #
-    def self.request(service_name, params = {})
+    def self.request(service_name, params = {}, proxy = {})
       params.symbolize_keys!
       
       parser = (params.delete(:parser) || :none).to_sym
@@ -83,7 +85,7 @@ module Rapidshare
         raise Rapidshare::API::Error.new("Invalid parser for request method: #{parser}")
       end
   
-      response = self.get(URL % [service_name, params.to_query]).body
+      response = self.get(URL % [service_name, params.to_query], proxy).body
       
       if response.start_with?(ERROR_PREFIX)
         case error = response.sub(ERROR_PREFIX, "").split('.').first
@@ -102,7 +104,7 @@ module Rapidshare
     # Provides instance interface to class method +request+.
     #
     def request(service_name, params = {})
-      self.class.request(service_name, params.merge(:cookie => @cookie))
+      self.class.request(service_name, params.merge(:cookie => @cookie), @proxy)
     end
   
     # Parses response from +request+ method (parser options are listed there)
@@ -200,9 +202,10 @@ module Rapidshare
   
     # Provides interface for GET requests
     # 
-    def self.get(url)
+    def self.get(url, proxy = {})
       url = URI.parse(url)
-      http = Net::HTTP.new(url.host, url.port, @proxy.proxy_address, @proxy.proxy_port, @proxy.proxy_login, @proxy.proxy_password)
+
+      http = Net::HTTP.new(url.host, url.port, proxy[:proxy_address], proxy[:proxy_port], proxy[:proxy_login], proxy[:proxy_password])
       http.use_ssl = (url.scheme == 'https')
       http.get URI::escape(url.request_uri)
     end
