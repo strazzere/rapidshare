@@ -197,7 +197,10 @@ module Rapidshare
     def self.get(url)
       url = URI.parse(url)
       http = Net::HTTP.new(url.host, url.port)
-      http.use_ssl = (url.scheme == 'https')
+      if url.scheme == 'https'
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       http.get URI::escape(url.request_uri)
     end
   
