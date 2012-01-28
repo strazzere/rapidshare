@@ -1,9 +1,13 @@
 # encoding: utf-8
 
 module Rapidshare
-  VERSION = "0.5.0"
+  VERSION = "0.5.1"
 
   # CHANGELOG:
+  #
+  # 0.5.1
+  # fixed ssl issues
+  # add option to pass only cookie as a string to API#initialize
   #
   # 0.5.0
   # wrote documentation
