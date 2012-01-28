@@ -33,7 +33,12 @@ module Rapidshare
     # * *password* - premium account password
     # * *cookie* - cookie can be provided instead of login and password
     #
+    # Instead of params hash, you can pass only cookie as a string
+    #
     def initialize(params)
+      # if there's "just one param", it's a cookie
+      params = { :cookie => params } if params.is_a? String
+
       if params[:cookie]
         @cookie = params[:cookie]
         # throws LoginFailed exception if cookie is invalid
