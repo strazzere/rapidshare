@@ -11,6 +11,10 @@ module Rapidshare
   
     attr_reader :url, :api, :fileid, :filename, :filesize, :server_id,
       :short_host, :downloads_dir, :downloaded, :error
+
+    # custom errors for Rapidshare::API class
+    class Error < StandardError; end
+    class Error::DownloadFailed < StandardError; end
   
     # Options:
     # * *filename* (optional) - specifies filename under which the file will be
@@ -62,17 +66,23 @@ module Rapidshare
     def perform
       return self unless self.check
       
-      file = open(File.join(@downloads_dir, @filename), 'wb')
-      
       url = URI.parse(self.download_link)
 
       http = Net::HTTP.new(url.host, url.port, @proxy[:proxy_address], @proxy[:proxy_port], @proxy[:proxy_login], @proxy[:proxy_password])
       http.use_ssl = (url.scheme == 'https')
-      file << http.get(URI::escape(url.request_uri)).body
-  
-      file.close
+      body = http.get(URI::escape(url.request_uri)).body
+
+      # TODO : Add unit test for this block
+      if(Digest::MD5.hexdigest(body).casecmp(@md5))
+        file = open(File.join(@downloads_dir, @filename), 'wb')
+        file << body
+        file.close
+        @downloaded = true
+      else
+        @downloaded = false
+        raise Error::DownloadFailed.new('MD5 of the file did not match the MD5 provided by Rapidshare!')
+      end
       
-      @downloaded = true
       self
     end
   
