@@ -40,6 +40,11 @@ class ApiTest < Test::Unit::TestCase
       assert_equal @cookie, @api.cookie
     end
 
+    should "accept just a cookie string instead of params hash" do
+      @api = Rapidshare::API.new(@cookie)
+      assert_equal @cookie, @api.cookie
+    end
+
     should "raise LoginFailed exception for invalid login data" do
       assert_raise(Rapidshare::API::Error::LoginFailed) do
         Rapidshare::API.new(:login => 'invalid_login', :password => 'invalid_password')

@@ -7,7 +7,8 @@ module Rapidshare
   #
   # 0.5.1
   # add support for proxies and removed progress bar
-  #
+  # fixed ssl issues
+  # add option to pass only cookie as a string to API#initialize
   #
   # 0.5.0
   # wrote documentation

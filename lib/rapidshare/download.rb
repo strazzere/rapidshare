@@ -69,7 +69,10 @@ module Rapidshare
       url = URI.parse(self.download_link)
 
       http = Net::HTTP.new(url.host, url.port, @proxy[:proxy_address], @proxy[:proxy_port], @proxy[:proxy_login], @proxy[:proxy_password])
-      http.use_ssl = (url.scheme == 'https')
+      if url.scheme == 'https'
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       body = http.get(URI::escape(url.request_uri)).body
 
       # TODO : Add unit test for this block

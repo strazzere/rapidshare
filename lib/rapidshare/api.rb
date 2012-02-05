@@ -35,12 +35,15 @@ module Rapidshare
     #
     # * *proxy* - proxy to use for connecting to rapidshare
     #
+    # Instead of params hash, you can pass only cookie as a string 
     def initialize(params)
       if !params[:proxy].nil? && !params[:proxy][:proxy_address].nil?
         @proxy = params[:proxy]
       else
         @proxy = {}
       end
+
+      params = { :cookie => params } if params.is_a? String
 
       if params[:cookie]
         @cookie = params[:cookie]
@@ -206,7 +209,11 @@ module Rapidshare
       url = URI.parse(url)
 
       http = Net::HTTP.new(url.host, url.port, proxy[:proxy_address], proxy[:proxy_port], proxy[:proxy_login], proxy[:proxy_password])
-      http.use_ssl = (url.scheme == 'https')
+      if url.scheme == 'https'
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+
       http.get URI::escape(url.request_uri)
     end
   
