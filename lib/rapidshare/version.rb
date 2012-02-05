@@ -1,9 +1,13 @@
 # encoding: utf-8
 
 module Rapidshare
-  VERSION = "0.5.0"
+  VERSION = "0.5.1"
 
   # CHANGELOG:
+  #
+  # 0.5.1
+  # add support for proxies and removed progress bar
+  #
   #
   # 0.5.0
   # wrote documentation

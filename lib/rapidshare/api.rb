@@ -195,7 +195,7 @@ module Rapidshare
     #   will be saved. Default: current directory.
     #
     def download(file, options= {})
-      Rapidshare::Download.new(file, self, options).perform
+      Rapidshare::Download.new(file, self, options, @proxy).perform
     end
   
     # helper methods

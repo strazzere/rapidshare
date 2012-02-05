@@ -5,7 +5,6 @@ module Rapidshare
   # Downloads files from Rapidshare. Separate from +Rapidshare::API+ class because
   # downloading is much more complex than other service calls.
   #
-  # Displays text progress bar during download.
   #
   class Download
     DOWNLOAD_URL = 'https://rs%s%s.rapidshare.com/cgi-bin/rsapi.cgi?%s'
@@ -19,12 +18,13 @@ module Rapidshare
     # * *downloads_dir* (optional) - specifies directory into which downloaded files
     #   will be saved. Default: current directory.
     #
-    def initialize(url, api, options = {})
+    def initialize(url, api, options = {}, proxy = {})
       @url = url
       @api = api
       @filename = options[:save_as]
       @downloads_dir = options[:downloads_dir] || Dir.pwd
-   
+      @proxy = proxy
+
       # OPTIMIZE replace these simple status variables with status codes
       # and corresponding errors like "File not found"
       # 
@@ -48,6 +48,7 @@ module Rapidshare
         @filesize = response[:file_size].to_f
         @server_id = response[:server_id] 
         @short_host = response[:short_host]
+        @md5 = response[:md5]
         true
       else
         # TODO report errors according to actual file status
@@ -59,32 +60,15 @@ module Rapidshare
     # Downloads file. Calls +check+ method first.
     #
     def perform
-      # before downloading we have to check if file exists. checkfiles service
-      # also gives us information for the download: hostname, file size for
-      # progressbar
       return self unless self.check
       
       file = open(File.join(@downloads_dir, @filename), 'wb')
       
-      bar = ProgressBar.new(@filename, @filesize)
-      bar.file_transfer_mode
-  
-      Curl::Easy.perform(self.download_link) do |curl|
-        # HOTFIX don't verify SSL peer certificate
-        curl.ssl_verify_peer = false
+      url = URI.parse(self.download_link)
 
-        curl.on_progress do |dl_total, dl_now|
-          bar.set(dl_now)
-          dl_now <= dl_total
-        end 
-  
-        curl.on_body do |data|
-          file << data
-          data.length
-        end
-        
-        curl.on_complete { bar.finish }
-      end
+      http = Net::HTTP.new(url.host, url.port, @proxy[:proxy_address], @proxy[:proxy_port], @proxy[:proxy_login], @proxy[:proxy_password])
+      http.use_ssl = (url.scheme == 'https')
+      file << http.get(URI::escape(url.request_uri)).body
   
       file.close
       

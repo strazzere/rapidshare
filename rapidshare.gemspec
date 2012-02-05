@@ -19,10 +19,8 @@ Gem::Specification.new do |s|
   # s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('activesupport', '~> 3.1')
+  s.add_dependency('activesupport', '>= 3.0.5')
   s.add_dependency('rake', '~> 0.9.2')
-  s.add_dependency('httparty', '~> 0.6')
-  s.add_dependency('curb', '~> 0.7')
   s.add_dependency('progressbar', '~> 0.9')
   
   # development dependencies 
